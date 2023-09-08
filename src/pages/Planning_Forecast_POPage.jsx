@@ -28,6 +28,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [fetchedProductData, setFetchedProductData] = useState([]);
     const [selectedPoBal, setSelectedPoBal] = useState(null);
     const [isModalOpen_PODet, setIsModalOpen_PODet] = useState(false);
+    const [fcDiff, setFcDiff] = useState({});
+
 
     function formatNumberWithCommas(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -230,19 +232,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_PDshow();
     }, [selectedProduct , selectedSeries]);
 
-    // useEffect(() => {
-    //     // Update the label with the fetched data when pdShow changes
-    //     const pdShowLabel = document.getElementById("pdShowLabel");
-    //     if (pdShowLabel) {
-    //       pdShowLabel.innerText = `Fetched Data: ${JSON.stringify(pdShow)}`;
-    //     }
-    //   }, [pdShow]);
-
     useEffect(() => {
         // Extract 'prd_name' values and store them in 'fetchedProductData'
         const prdNames = pdShow.map((item) => item.prd_name);
         setFetchedProductData(prdNames);
     }, [pdShow]);
+
     function chunkArray(array, chunkSize) {
         const result = [];
         for (let i = 0; i < array.length; i += chunkSize) {
@@ -267,18 +262,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         dataByProduct[product.pfd_period_no].qty_fc[product.wk] = product.qty_fc;
     });
     
-    // const fcLatestData = {};
-    // wk_no.forEach(week => {
-    // const week4Chars = week.slice(-4);
-    // fcLatestData[week] = Object.values(dataByProduct).reduce((latest, productData) => {
-    //     const period4Chars = productData.pfd_period_no.slice(-4);
-    //     if (period4Chars === week4Chars) {
-    //     const qty_fc = productData.qty_fc[week];
-    //     return qty_fc !== undefined ? qty_fc : 0;
-    //     }
-    //     return latest;
-    // }, 0);
-    // });
 
     const fcLatestData = {};
     wk_no.forEach(week => {
@@ -297,6 +280,22 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             }
             return latest;
         }, 0);
+    });
+    
+    // Calculate FC_Diff values
+    const fcDiffData = {};
+    wk_no.forEach((week, weekIndex) => {
+        if (weekIndex > 0) {
+            const currentWeek = week;
+            const previousWeek = wk_no[weekIndex - 1];
+            
+            fcDiffData[currentWeek] = {};
+            Object.keys(dataByProduct).forEach((periodNo) => {
+                const currentQtyFC = dataByProduct[periodNo].qty_fc[currentWeek] || 0;
+                const previousQtyFC = dataByProduct[periodNo].qty_fc[previousWeek] || 0;
+                fcDiffData[currentWeek][periodNo] = currentQtyFC - previousQtyFC;
+            });
+        }
     });
 
     return (
@@ -387,11 +386,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     );
                                     })
                                 }
-                                {/* {monDate.map((date, index) => (
-                                    <th key={index} style={{ textAlign: 'center' }}>
-                                        {date}
-                                    </th>
-                                ))} */}
                             </tr>
                         </thead>
                         <tbody>
@@ -433,6 +427,10 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     {formatNumberWithCommas(fcLatestData[week])}
                                     </td>
                                 ))}
+                            </tr>
+                            <tr>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14'}}>FC_Diff :</td>
+                                
                             </tr>
 
                             <tr>
