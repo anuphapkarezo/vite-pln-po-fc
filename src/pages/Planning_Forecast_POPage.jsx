@@ -28,8 +28,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [fetchedProductData, setFetchedProductData] = useState([]);
     const [selectedPoBal, setSelectedPoBal] = useState(null);
     const [isModalOpen_PODet, setIsModalOpen_PODet] = useState(false);
-    const [fcDiff, setFcDiff] = useState({});
-
+    const [fcFlatData, setFcFlatData] = useState([]);
 
     function formatNumberWithCommas(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -80,7 +79,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries,
     ) => {
     try {
-        setIsLoading(true);
+        // setIsLoading(true);
         const response = await fetch(`http://localhost:3002/api/filter-po-all-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
@@ -97,11 +96,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             poDueData[item.wk] = item.qty_due;
         });
 
-        // const poBalData = {};
-        // data.forEach(item => {
-        //     poBalData[item.wk] = item.qty_bal;
-        // });
-
         const FgData = {};
         data.forEach(item => {
             FgData[item.wk] = item.qty_fg;
@@ -115,7 +109,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         setPo_All(data);
         setPoRec(poRecData);
         setPoDue(poDueData);
-        // setPoBal(poBalData);
         setFg(FgData);
         setWip(WipData);
 
@@ -123,7 +116,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Po_All');
         } finally {
-            setIsLoading(false); // Set isLoading back to false when fetch is complete
+            // setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
     };
 
@@ -132,7 +125,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries,
     ) => {
     try {
-        setIsLoading(true);
+        // setIsLoading(true);
         const response = await fetch(`http://localhost:3002/api/filter-po-bal-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
@@ -148,16 +141,127 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Po_Bal');
         } finally {
-            setIsLoading(false); // Set isLoading back to false when fetch is complete
+            // setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
     };
+    
+
+    const fetchData_ActualShip = async (
+        prd_name = selectedProduct,
+        prd_series = selectedSeries,
+    ) => {
+    try {
+        // setIsLoading(true);
+        const response = await fetch(`http://localhost:3002/api/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        if (!response.ok) {
+            throw new Error('Network response was not OK');
+        }
+        const data = await response.json();
+        const ActualData = {};
+        data.forEach(item => {
+            ActualData[item.wk] = item.qty_ship;
+        });
+        setActualShips(ActualData);
+        } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('An error occurred while fetching data Actual ship Summary');
+        } finally {
+            // setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
+    };
+
+    const fetchData_PDshow = async (
+        prd_name = selectedProduct,
+        prd_series = selectedSeries,
+    ) => {
+    try {
+        // setIsLoading(true);
+        const response = await fetch(`http://localhost:3002/api/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        if (!response.ok) {
+            throw new Error('Network response was not OK');
+        }
+        const data = await response.json();
+        console.log("Data" , data);
+        setpdShow(data);
+        } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('An error occurred while fetching data product show');
+        } finally {
+            // setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
+    };
+
+    const fetchData_FcFlat = async (
+        prd_name = selectedProduct,
+        prd_series = selectedSeries,
+    ) => {
+        try {
+            const response = await fetch(`http://localhost:3002/api/filter-fc-diff-prev-curr?prd_series=${prd_series}&prd_name=${prd_name}`);
+            if (!response.ok) {
+                throw new Error('Network response was not OK');
+            }
+            const data = await response.json();
+            const FlatData = {};
+            data.forEach(item => {
+                FlatData[item.wk] = item.qty_fc;
+            });
+            setFcFlatData(FlatData); // Update the state with fetched data
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setError('An error occurred while fetching data FC_FLAT');
+        } finally {
+            // setIsLoading(false);
+        }
+    };
+    
+    useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
+        fetchData_week();
+        fetchData_fc();
+        fetchData_po();
+        fetchData_pobal();
+        fetchData_ActualShip();
+        fetchData_PDshow();
+        fetchData_FcFlat();
+    }, [selectedProduct , selectedSeries]);
+
+    useEffect(() => {
+        const prdNames = pdShow.map((item) => item.prd_name);
+        console.log('pdShow' , prdNames);
+        if (prdNames.length === 0) {
+            setFetchedProductData('');
+        } else {
+            setFetchedProductData(prdNames);
+        }
+    }, [pdShow]);
+
+    function chunkArray(array, chunkSize) {
+        const result = [];
+        for (let i = 0; i < array.length; i += chunkSize) {
+          result.push(array.slice(i, i + chunkSize));
+        }
+        return result;
+    }
+      
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    const dataByProduct = {};
+    products.forEach(product => {
+        if (!dataByProduct[product.pfd_period_no]) {
+            dataByProduct[product.pfd_period_no] = {
+                pfd_period_no: product.pfd_period_no,
+                qty_fc: {}
+            };
+        }
+        dataByProduct[product.pfd_period_no].qty_fc[product.wk] = product.qty_fc;
+    });
+
     // Function to open the modal with the selected PO_BAL value
     const openModal = (poBalValue) => {
         if (poBalValue > 0) {
-            console.log("Opening modal with value:", poBalValue);
             setSelectedPoBal(poBalValue);
             setIsModalOpen_PODet(true);
-            console.log("isModalOpen:", isModalOpen_PODet);
         }
     };
 
@@ -178,89 +282,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         boxShadow: 24,
         p: 4,
     };
-
-    const fetchData_ActualShip = async (
-        prd_name = selectedProduct,
-        prd_series = selectedSeries,
-    ) => {
-    try {
-        setIsLoading(true);
-        const response = await fetch(`http://localhost:3002/api/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
-        const ActualData = {};
-        data.forEach(item => {
-            ActualData[item.wk] = item.qty_ship;
-        });
-        setActualShips(ActualData);
-        } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('An error occurred while fetching data Actual ship Summary');
-        } finally {
-            setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
-    };
-
-    const fetchData_PDshow = async (
-        prd_name = selectedProduct,
-        prd_series = selectedSeries,
-    ) => {
-    try {
-        setIsLoading(true);
-        const response = await fetch(`http://localhost:3002/api/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
-        setpdShow(data);
-        } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('An error occurred while fetching data product show');
-        } finally {
-            setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
-    };
-
-    useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
-        fetchData_week();
-        fetchData_fc();
-        fetchData_po();
-        fetchData_pobal();
-        fetchData_ActualShip();
-        fetchData_PDshow();
-    }, [selectedProduct , selectedSeries]);
-
-    useEffect(() => {
-        // Extract 'prd_name' values and store them in 'fetchedProductData'
-        const prdNames = pdShow.map((item) => item.prd_name);
-        setFetchedProductData(prdNames);
-    }, [pdShow]);
-
-    function chunkArray(array, chunkSize) {
-        const result = [];
-        for (let i = 0; i < array.length; i += chunkSize) {
-          result.push(array.slice(i, i + chunkSize));
-        }
-        return result;
-    }
-      
-      
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    const dataByProduct = {};
-    products.forEach(product => {
-        if (!dataByProduct[product.pfd_period_no]) {
-            dataByProduct[product.pfd_period_no] = {
-                pfd_period_no: product.pfd_period_no,
-                qty_fc: {}
-            };
-        }
-        dataByProduct[product.pfd_period_no].qty_fc[product.wk] = product.qty_fc;
-    });
     
 
     const fcLatestData = {};
@@ -282,21 +303,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         }, 0);
     });
     
-    // Calculate FC_Diff values
-    const fcDiffData = {};
-    wk_no.forEach((week, weekIndex) => {
-        if (weekIndex > 0) {
-            const currentWeek = week;
-            const previousWeek = wk_no[weekIndex - 1];
-            
-            fcDiffData[currentWeek] = {};
-            Object.keys(dataByProduct).forEach((periodNo) => {
-                const currentQtyFC = dataByProduct[periodNo].qty_fc[currentWeek] || 0;
-                const previousQtyFC = dataByProduct[periodNo].qty_fc[previousWeek] || 0;
-                fcDiffData[currentWeek][periodNo] = currentQtyFC - previousQtyFC;
-            });
-        }
-    });
+    
 
     return (
         <div className='container'>
@@ -309,11 +316,30 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     }}
                 />
                 <div id="pdShowLabel" style={{width: '565px'}}>
-                    {chunkArray(fetchedProductData, 8).map((chunk, index) => (
+                    {selectedProduct === "Product" ? (
+                        <div style={{ backgroundColor: '#FFFFDD', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>{selectedSeries}</div> // Render an empty div if selectedProduct is "Empty"
+                    ) : (
+                        chunkArray(fetchedProductData, 8).map((chunk, index) => (
+                        <div key={index} style={{ backgroundColor: '#FFFFDD', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>
+                            {chunk.join(' : ')}
+                        </div>
+                        ))
+                    )}
+                    {/* {fetchedProductData ? (
+                        chunkArray(fetchedProductData, 8).map((chunk, index) => (
+                        <div key={index} style={{ backgroundColor: '#FFFFDD', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>
+                            {chunk.join(' : ')}
+                        </div>
+                        ))
+                    ) : (
+                        // Render empty content when fetchedProductData is empty
+                        null
+                    )} */}
+                    {/* {chunkArray(fetchedProductData, 8).map((chunk, index) => (
                         <div key={index} style={{backgroundColor: '#FFFFDD' , fontSize: '14px' , fontFamily: 'Angsana News, sans-serif' , color: '#952323'}}>
                         {chunk.join(' : ')}
                         </div>
-                    ))}
+                    ))} */}
                 </div>
             </div>
             
@@ -429,8 +455,18 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 ))}
                             </tr>
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14'}}>FC_Diff :</td>
-                                
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14'}}>FC_Fluctuation :</td>
+                                {wk_no.map((week, weekIndex) => {
+                                    const FlatValue = fcFlatData[week];
+                                    return (
+                                        <td
+                                            key={weekIndex}
+                                            style={{ textAlign: 'center', backgroundColor: '#FD8D14' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
+                                        >
+                                            {FlatValue !== undefined ? formatNumberWithCommas(FlatValue) : "0"}
+                                        </td>
+                                    );
+                                })}
                             </tr>
 
                             <tr>

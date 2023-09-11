@@ -118,15 +118,15 @@ c.execute(query4)
 result = c.fetchall()
 col_names = [desc[0] for desc in c.description]  # columns name PostgreSQL
 df = pd.DataFrame(result, columns=col_names)
-
-#Check data details
-df.columns = df.columns.str.lower()
-columns_no = df.shape[1]
-rows_no = df.shape[0]
-df_size_mb = round(df.memory_usage().sum()/(1024*1024),2)
-print("data row x col: ", rows_no,'x',columns_no,'Size_MB:',df_size_mb)
-# df.to_csv('df_cfm_aoi_day.csv')
-# print(df.columns)
+if len(df) > 0:
+    #Check data details
+    df.columns = df.columns.str.lower()
+    columns_no = df.shape[1]
+    rows_no = df.shape[0]
+    df_size_mb = round(df.memory_usage().sum()/(1024*1024),2)
+    print("data row x col: ", rows_no,'x',columns_no,'Size_MB:',df_size_mb)
+    # df.to_csv('df_cfm_aoi_day.csv')
+    # print(df.columns)
 
 #Disconnect Oracle database
 c.close()
@@ -161,10 +161,10 @@ if len(df) > 0:
     # Commit the changes to the database
     conn.commit()
 
-# Close the cursor and connection
-del df
-cur.close()
-conn.close()
+    # Close the cursor and connection
+    del df
+    cur.close()
+    conn.close()
 
 #Calucate_time_minutes
 stop_time = datetime.datetime.now()
