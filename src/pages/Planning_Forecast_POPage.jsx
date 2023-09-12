@@ -5,8 +5,91 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { DataGrid } from '@mui/x-data-grid'; // Import DataGrid
+import {
+    DataGrid,
+    GridToolbarContainer,
+    GridToolbarExportContainer,
+    GridCsvExportMenuItem,
+    useGridApiContext,
+    gridFilteredSortedRowIdsSelector,
+    gridVisibleColumnFieldsSelector,
+  } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close'; // Import CloseIcon
+
+const getJson = (apiRef) => {
+    // Select rows and columns
+    const filteredSortedRowIds = gridFilteredSortedRowIdsSelector(apiRef);
+    const visibleColumnsField = gridVisibleColumnFieldsSelector(apiRef);
+  
+    // Format the data. Here we only keep the value
+    const data = filteredSortedRowIds.map((id) => {
+      const row = {};
+      visibleColumnsField.forEach((field) => {
+        row[field] = apiRef.current.getCellParams(id, field).value;
+      });
+      return row;
+    });
+  
+    // Stringify with some indentation
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#parameters
+    return JSON.stringify(data, null, 2);
+  };
+  
+  const exportBlob = (blob, filename) => {
+    // Save the blob in a json file
+    const url = URL.createObjectURL(blob);
+  
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+  
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    });
+  };
+  
+  function JsonExportMenuItem(props) {
+    const apiRef = useGridApiContext();
+  
+    const { hideMenu } = props;
+  
+    return (
+      <MenuItem
+        onClick={() => {
+          const jsonString = getJson(apiRef);
+          const blob = new Blob([jsonString], {
+            type: 'text/json',
+          });
+          exportBlob(blob, 'DataGrid_demo.json');
+  
+          // Hide the export menu after the export
+          hideMenu?.();
+        }}
+      >
+        Export JSON
+      </MenuItem>
+    );
+  }
+  
+  const csvOptions = { delimiter: ',' };
+  
+  function CustomExportButton(props) {
+    return (
+      <GridToolbarExportContainer {...props}>
+        <GridCsvExportMenuItem options={csvOptions} />
+        <JsonExportMenuItem />
+      </GridToolbarExportContainer>
+    );
+  }
+  
+  function CustomToolbar(props) {
+    return (
+      <GridToolbarContainer {...props}>
+        <CustomExportButton />
+      </GridToolbarContainer>
+    );
+  }
 
 export default function Planning_Forecast_POPage({ onSearch }) {
     const [error , setError] = useState(null);
@@ -278,7 +361,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 400,
-        bgcolor: '#FFDBC3',
+        bgcolor: '#FFFADD',
         boxShadow: 24,
         p: 4,
     };
@@ -303,8 +386,27 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         }, 0);
     });
     
+    const columns = [
+        { field: 'productName', headerName: 'Product Name', width: 200},
+        { field: 'soLine', headerName: 'SO Line', width: 200 },
+        { field: 'soNumber', headerName: 'SO Number', width: 200 },
+        { field: 'reqDate', headerName: 'Req. Date', width: 200 },
+        { field: 'dueDate', headerName: 'Due. Date', width: 200 },
+        { field: 'qtyBal', headerName: 'Qty Bal', width: 200 },
+      ];
+      
+      const rows = [
+        {
+          id: 1,
+          productName: 'CAC-126S-1B',
+          soLine: 1,
+          soNumber: '2SD05521',
+          reqDate: '2023-09-04',
+          dueDate: '2023-09-04',
+          qtyBal: 1300,
+        },
+      ];
     
-
     return (
         <div className='container'>
             {/* style={{ display: 'flex', flexDirection: 'row' }} */}
@@ -596,6 +698,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                         </tbody>
                     </table>
                 )}
+
+                
                 {/* Modal */}
                 {isModalOpen_PODet && (
                     <Modal
@@ -604,9 +708,19 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                     >
-                    <Box sx={{ ...style, width: 800 , height: 500 }}>
+                    <Box sx={{ ...style, width: 1325 , height: 500 }}>
                         <h5 style={{textAlign: 'center'}}>PO Balance by Details</h5>
-                        <table>
+                        <div style={{ height: 400, width: '100%' , border: '1px solid black'}}>
+                            <DataGrid
+                                rows={rows}
+                                columns={columns}
+                                pageSize={5}
+                                checkboxSelection
+                                autoPageSize
+                                style={{ minHeight: '400px', border: '1px solid #ccc' }}
+                            />
+                        </div>
+                        {/* <table>
                             <thead >
                                 <tr style={{textAlign: 'center'}}>
                                     <th style={{border: '1px solid black' , width: '250px'}}>Product Name</th>
@@ -627,7 +741,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     <td style={{textAlign: 'center'}}>1,300</td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> */}
                     </Box>
                 </Modal>
                 )}

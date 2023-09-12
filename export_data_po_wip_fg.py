@@ -157,6 +157,7 @@ query5 = ('''
        ,d.request_date
        ,d.due_date
        ,p.prd_name
+       ,SUBSTR(p.prd_name, 1, 3) AS prd_series
        ,CASE WHEN d.ship_status = 0 THEN d.order_qty ELSE 0 END QTY_BAL
       FROM PLAN.SO_DETAIL d
            INNER JOIN FPC.FPC_PRODUCT p ON d.item_code = p.prd_item_code
