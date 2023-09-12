@@ -5,7 +5,7 @@ import psycopg2
 from psycopg2.extras import execute_values
 import psutil
 import datetime
-from database_connection import con_oracle, connect_to_psql_localhost #กรณี Run ใน Django ต้องใส่ dot . หน้า database_connection
+from database_connection import con_oracle, connect_to_psql_112 #กรณี Run ใน Django ต้องใส่ dot . หน้า database_connection
 #Recode the start time
 start_time = datetime.datetime.now()
 print('Start:', start_time)
@@ -22,8 +22,8 @@ query4 = ('''
     SELECT
     FDAY.PFD_PERIOD_NO,
     'WK' || SUBSTR(TO_CHAR(FDAY.PFD_FORECAST_DATE,'YYYY'), 3, 2) || TO_CHAR(TO_DATE(FDAY.PFD_FORECAST_DATE, 'DD/MM/YYYY'), 'WW') AS WK,
-    SUBSTR(HED.PFH_PRD_NAME, 1, 3) AS prd_series, -- Extract the first 3 characters from prd_name
     HED.PFH_PRD_NAME AS prd_name,
+    SUBSTR(HED.PFH_PRD_NAME, 1, 3) AS prd_series, -- Extract the first 3 characters from prd_name
     SUM(FDAY.PFD_FORECAST_QTY) AS QTY_FC
 FROM
     PCAP.PCAP_FORECAST_SALES_HEADER HED
@@ -139,7 +139,7 @@ memory_percent_middle= memory.percent
 
 if len(df) > 0:
     # Prepare the INSERT statement
-    table_name = "pln_fc"
+    table_name = "pln.pln_fc"
     columns = ", ".join(df.columns)
     
     insert_query = f'''
@@ -147,24 +147,33 @@ if len(df) > 0:
         VALUES %s
         ON CONFLICT (pfd_period_no , wk , prd_name)
         DO UPDATE
-        SET qty_fc = EXCLUDED.qty_fc
+        SET qty_fc = EXCLUDED.qty_fc,
+            update_datetime = EXCLUDED.update_datetime
     '''
 
     # Convert DataFrame rows to a list of tuples
     data_values = [tuple(row) for row in df.to_numpy()]
 
     # Execute the INSERT statement using execute_values for faster insertion
-    conn, to_db = connect_to_psql_localhost()
+    conn, to_db = connect_to_psql_112()
     cur = conn.cursor()
     execute_values(cur, insert_query, data_values)
 
     # Commit the changes to the database
     conn.commit()
 
-    # Close the cursor and connection
-    del df
-    cur.close()
-    conn.close()
+    # query6 = ('''
+    # delete from pln_fc pf
+    # where pf.update_datetime != (select max(pf.update_datetime)  
+    # from pln_fc pf)
+    # ''')
+    # cur.execute(query6)
+    # conn.commit()
+
+# Close the cursor and connection
+del df
+cur.close()
+conn.close()
 
 #Calucate_time_minutes
 stop_time = datetime.datetime.now()

@@ -5,7 +5,7 @@ import psycopg2
 from psycopg2.extras import execute_values
 import psutil
 import datetime
-from database_connection import con_oracle, connect_to_psql_localhost #กรณี Run ใน Django ต้องใส่ dot . หน้า database_connection
+from database_connection import con_oracle, connect_to_psql_112 #กรณี Run ใน Django ต้องใส่ dot . หน้า database_connection
 #Recode the start time
 start_time = datetime.datetime.now()
 print('Start:', start_time)
@@ -60,33 +60,33 @@ query5 = ('''
        ,CASE WHEN j.PROGRESS_RECID IS NULL THEN 'N' ELSE 'Y' END AS INV_STATUS --check status
        --,'id-' || j.PROGRESS_RECID AS PROG_ID
         ,CASE WHEN j.PROGRESS_RECID IS NULL THEN f.PROGRESS_RECID ELSE j.PROGRESS_RECID END AS PROG_ID --check status
-FROM QAD.IDH_HIST@PCTTPROD f
-INNER JOIN QAD.IH_HIST@PCTTPROD g ON f.IDH_NBR = g.IH_NBR
-                                  AND f.IDH_INV_NBR = g.IH_INV_NBR
-INNER JOIN fpc.fpc_product h ON f.IDH_PART = h.prd_item_code
-LEFT JOIN (SELECT f.IDH_NBR,SUBSTR(f.IDH_INV_NBR,1,7) AS IDH_INV_NBR, max(PROGRESS_RECID) AS PROGRESS_RECID
-           FROM QAD.IDH_HIST@PCTTPROD f
-           GROUP BY f.IDH_NBR, SUBSTR(f.IDH_INV_NBR,1,7)) j ON f.IDH_NBR = j.IDH_NBR
-                                         AND f.PROGRESS_RECID = j.PROGRESS_RECID
-WHERE SUBSTR(F.IDH_NBR,0,2) in ('2S','2F')
---AND f.IDH_PART like '%CAW076W0A'
---AND f.idh_nbr= '2FC06563'
-AND TO_CHAR(g.IH_SHIP_DATE,'YYYYMMDD') >= '20230101'
---AND SUBSTR(TO_CHAR(g.IH_SHIP_DATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(g.IH_SHIP_DATE,'DD/MM/YYYY'),'WW') >= SUBSTR(TO_CHAR(SYSDATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(sysdate-84 ,'DD/MM/YYYY'),'WW')
-GROUP BY f.IDH_NBR
-         ,f.IDH_LINE
-       ,f.IDH_CUSTPART
-       ,f.IDH_INV_NBR
-       ,g.IH_ORD_DATE
-       ,f.IDH_DUE_DATE
-       ,g.IH_SHIP_DATE
-       ,h.prd_name
-       ,SUBSTR(h.prd_name,1,3)
-       ,CASE WHEN j.PROGRESS_RECID IS NULL THEN 'N' ELSE 'Y' END
-       ,CASE WHEN j.PROGRESS_RECID IS NULL THEN f.PROGRESS_RECID ELSE j.PROGRESS_RECID END
-ORDER BY
-      f.IDH_NBR
-      ,f.IDH_INV_NBR
+        FROM QAD.IDH_HIST@PCTTPROD f
+        INNER JOIN QAD.IH_HIST@PCTTPROD g ON f.IDH_NBR = g.IH_NBR
+                                        AND f.IDH_INV_NBR = g.IH_INV_NBR
+        INNER JOIN fpc.fpc_product h ON f.IDH_PART = h.prd_item_code
+        LEFT JOIN (SELECT f.IDH_NBR,SUBSTR(f.IDH_INV_NBR,1,7) AS IDH_INV_NBR, max(PROGRESS_RECID) AS PROGRESS_RECID
+                FROM QAD.IDH_HIST@PCTTPROD f
+                GROUP BY f.IDH_NBR, SUBSTR(f.IDH_INV_NBR,1,7)) j ON f.IDH_NBR = j.IDH_NBR
+                                                AND f.PROGRESS_RECID = j.PROGRESS_RECID
+        WHERE SUBSTR(F.IDH_NBR,0,2) in ('2S','2F')
+        --AND f.IDH_PART like '%CAW076W0A'
+        --AND f.idh_nbr= '2FC06563'
+        AND TO_CHAR(g.IH_SHIP_DATE,'YYYYMMDD') >= '20230101'
+        --AND SUBSTR(TO_CHAR(g.IH_SHIP_DATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(g.IH_SHIP_DATE,'DD/MM/YYYY'),'WW') >= SUBSTR(TO_CHAR(SYSDATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(sysdate-84 ,'DD/MM/YYYY'),'WW')
+        GROUP BY f.IDH_NBR
+                ,f.IDH_LINE
+            ,f.IDH_CUSTPART
+            ,f.IDH_INV_NBR
+            ,g.IH_ORD_DATE
+            ,f.IDH_DUE_DATE
+            ,g.IH_SHIP_DATE
+            ,h.prd_name
+            ,SUBSTR(h.prd_name,1,3)
+            ,CASE WHEN j.PROGRESS_RECID IS NULL THEN 'N' ELSE 'Y' END
+            ,CASE WHEN j.PROGRESS_RECID IS NULL THEN f.PROGRESS_RECID ELSE j.PROGRESS_RECID END
+        ORDER BY
+            f.IDH_NBR
+            ,f.IDH_INV_NBR
 ''')
 c.execute(query5)
 result = c.fetchall()
@@ -121,18 +121,27 @@ if len(df) > 0:
         VALUES %s
         ON CONFLICT (wk , prd_name)
         DO UPDATE
-        SET qty_ship = EXCLUDED.qty_ship
+        SET qty_ship = EXCLUDED.qty_ship,
+            update_datetime = EXCLUDED.update_datetime
     '''
 
     # Convert DataFrame rows to a list of tuples
     data_values = [tuple(row) for row in df.to_numpy()]
 
     # Execute the INSERT statement using execute_values for faster insertion
-    conn, to_db = connect_to_psql_localhost()
+    conn, to_db = connect_to_psql_112()
     cur = conn.cursor()
     execute_values(cur, insert_query, data_values)
 
     # Commit the changes to the database
+    conn.commit()
+
+    query6 = ('''
+    delete from pln_actual_ship_summary pass
+    where pass.update_datetime != (select max(pass.update_datetime)  
+    from pln_actual_ship_summary pass)
+    ''')
+    cur.execute(query6)
     conn.commit()
 
 if len(df1) > 0:
@@ -148,18 +157,27 @@ if len(df1) > 0:
         SET ord_date = EXCLUDED.ord_date,
             due_date = EXCLUDED.due_date,
             ship_date = EXCLUDED.ship_date,
-            qty_ship = EXCLUDED.qty_ship
+            qty_ship = EXCLUDED.qty_ship,
+            update_datetime = EXCLUDED.update_datetime
     '''
 
     # Convert DataFrame rows to a list of tuples
     data_values1 = [tuple(row) for row in df1.to_numpy()]
 
     # Execute the INSERT statement using execute_values for faster insertion
-    conn, to_db = connect_to_psql_localhost()
+    conn, to_db = connect_to_psql_112()
     cur = conn.cursor()
     execute_values(cur, insert_query, data_values1)
 
     # Commit the changes to the database
+    conn.commit()
+
+    query7 = ('''
+    delete from pln_actual_ship_detail pasd
+    where pasd.update_datetime != (select max(pasd.update_datetime)  
+    from pln_actual_ship_detail pasd)
+    ''')
+    cur.execute(query7)
     conn.commit()
 
 # Close the cursor and connection

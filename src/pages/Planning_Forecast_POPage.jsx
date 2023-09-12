@@ -16,82 +16,81 @@ import {
   } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close'; // Import CloseIcon
 
-const getJson = (apiRef) => {
-    // Select rows and columns
-    const filteredSortedRowIds = gridFilteredSortedRowIdsSelector(apiRef);
-    const visibleColumnsField = gridVisibleColumnFieldsSelector(apiRef);
-  
-    // Format the data. Here we only keep the value
-    const data = filteredSortedRowIds.map((id) => {
-      const row = {};
-      visibleColumnsField.forEach((field) => {
-        row[field] = apiRef.current.getCellParams(id, field).value;
-      });
-      return row;
-    });
-  
-    // Stringify with some indentation
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#parameters
-    return JSON.stringify(data, null, 2);
-  };
-  
-  const exportBlob = (blob, filename) => {
-    // Save the blob in a json file
-    const url = URL.createObjectURL(blob);
-  
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-  
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-    });
-  };
-  
-  function JsonExportMenuItem(props) {
-    const apiRef = useGridApiContext();
-  
-    const { hideMenu } = props;
-  
-    return (
-      <MenuItem
-        onClick={() => {
-          const jsonString = getJson(apiRef);
-          const blob = new Blob([jsonString], {
-            type: 'text/json',
-          });
-          exportBlob(blob, 'DataGrid_demo.json');
-  
-          // Hide the export menu after the export
-          hideMenu?.();
-        }}
-      >
-        Export JSON
-      </MenuItem>
-    );
-  }
-  
-  const csvOptions = { delimiter: ',' };
-  
-  function CustomExportButton(props) {
-    return (
-      <GridToolbarExportContainer {...props}>
-        <GridCsvExportMenuItem options={csvOptions} />
-        <JsonExportMenuItem />
-      </GridToolbarExportContainer>
-    );
-  }
-  
-  function CustomToolbar(props) {
-    return (
-      <GridToolbarContainer {...props}>
-        <CustomExportButton />
-      </GridToolbarContainer>
-    );
-  }
 
 export default function Planning_Forecast_POPage({ onSearch }) {
+    const getJson = (apiRef) => {
+        // Select rows and columns
+        const filteredSortedRowIds = gridFilteredSortedRowIdsSelector(apiRef);
+        const visibleColumnsField = gridVisibleColumnFieldsSelector(apiRef);
+      
+        // Format the data. Here we only keep the value
+        const data = filteredSortedRowIds.map((id) => {
+          const row = {};
+          visibleColumnsField.forEach((field) => {
+            row[field] = apiRef.current.getCellParams(id, field).value;
+          });
+          return row;
+        });
+      
+        // Stringify with some indentation
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#parameters
+        return JSON.stringify(data, null, 2);
+      };
+      
+        const exportBlob = (blob, filename) => {
+        // Save the blob in a json file
+        const url = URL.createObjectURL(blob);
+      
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+      
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        });
+    };
+      
+    function JsonExportMenuItem(props) {
+        const apiRef = useGridApiContext();
+        const { hideMenu } = props;
+      
+        return (
+          <MenuItem
+            onClick={() => {
+              const jsonString = getJson(apiRef);
+              const blob = new Blob([jsonString], {
+                type: 'text/json',
+              });
+              exportBlob(blob, 'DataGrid_demo.json');
+      
+              // Hide the export menu after the export
+              hideMenu?.();
+            }}
+          >
+            Export JSON
+          </MenuItem>
+        );
+    }
+    const csvOptions = { delimiter: ',' };
+      
+    function CustomExportButton(props) {
+        return (
+          <GridToolbarExportContainer {...props}>
+            <GridCsvExportMenuItem options={csvOptions} />
+            <JsonExportMenuItem />
+          </GridToolbarExportContainer>
+        );
+    }
+      
+    function CustomToolbar(props) {
+        return (
+          <GridToolbarContainer {...props}>
+            <CustomExportButton />
+          </GridToolbarContainer>
+        );
+    }
+
     const [error , setError] = useState(null);
     const [products , setProducts] = useState([]);
     const [runningNumber, setRunningNumber] = useState(1); //use for table
@@ -361,7 +360,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 400,
-        bgcolor: '#FFFADD',
+        bgcolor: 'white',
         boxShadow: 24,
         p: 4,
     };
@@ -549,7 +548,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 </tr>
                             ))}
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#CEDEBD'}}>FC_Lastest :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#CEDEBD'}}>FC_Lastest:</td>
                                 {wk_no.map((week, weekIndex) => (
                                     <td key={weekIndex} style={{ textAlign: 'center' , backgroundColor: '#CEDEBD' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}>
                                     {formatNumberWithCommas(fcLatestData[week])}
@@ -557,7 +556,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 ))}
                             </tr>
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14'}}>FC_Fluctuation :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14'}}>FC_Fluctuation:</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FlatValue = fcFlatData[week];
                                     return (
@@ -573,7 +572,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
 
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFC436' }}>PO_REC :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFC436' }}>PO_REC:</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const recValue = po_rec[week];
                                     return (
@@ -589,7 +588,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#F8DE22' }}>PO_DUE :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#F8DE22' }}>PO_DUE:</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const dueValue = po_due[week];
                                     return (
@@ -605,7 +604,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFE17B' }}>ACTUAL SHIP :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFE17B' }}>Actual ship:</td>
                                 {/* <td style={{ textAlign: 'center', backgroundColor: '#FFE17B' }}>0</td> */}
                                 {wk_no.map((week, weekIndex) => (
                                 <td
@@ -619,7 +618,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14' }}>PO_BAL :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14' }}>PO_BAL:</td>
                                 {wk_no.map((week, weekIndex) => (
                                     <td
                                         key={weekIndex}
@@ -633,7 +632,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>FG :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>FG:</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FgValue = Fg[week];
                                     return (
@@ -649,7 +648,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>FG UNmove :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>FG Unmove:</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FgValue = Fg[week];
                                     return (
@@ -665,7 +664,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>WIP :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>WIP:</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const WipValue = wip[week];
                                     return (
@@ -681,7 +680,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>WIP PEND :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>WIP Pending:</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const WipValue = wip[week];
                                     return (
@@ -699,7 +698,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     </table>
                 )}
 
-                
                 {/* Modal */}
                 {isModalOpen_PODet && (
                     <Modal
@@ -718,6 +716,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 checkboxSelection
                                 autoPageSize
                                 style={{ minHeight: '400px', border: '1px solid #ccc' }}
+                                slots={{ toolbar: CustomToolbar }} 
                             />
                         </div>
                         {/* <table>

@@ -40,7 +40,7 @@ FROM (SELECT 'WK'||SUBSTR(TO_CHAR(s.order_date ,'YYYY'),3,2)||(TO_CHAR(TO_DATE(s
            LEFT JOIN PLAN.SO_PLAN s ON d.so_no = s.so_no
       WHERE SUBSTR(d.So_No,0,2) in ('2S','2F')
       AND TO_CHAR(d.due_date ,'YYYYMMDD') >= '20230101'
-      AND SUBSTR(TO_CHAR(s.order_date ,'YYYY'),3,2)||TO_CHAR(TO_DATE(s.order_date ,'DD/MM/YYYY'),'WW') >= SUBSTR(TO_CHAR(SYSDATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(sysdate-56 ,'DD/MM/YYYY'),'WW')
+      AND SUBSTR(TO_CHAR(s.order_date ,'YYYY'),3,2)||TO_CHAR(TO_DATE(s.order_date ,'DD/MM/YYYY'),'WW') >= SUBSTR(TO_CHAR(SYSDATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(sysdate-84 ,'DD/MM/YYYY'),'WW')
       AND TO_CHAR(d.due_date ,'YYYYMMDD') not in ('20300101','20300202','20400101','20400202','20500101','20500202')--CUT PO Hold, update only due date
       AND d.So_Delete_Flag = 0
       AND d.order_qty >= 0
@@ -61,7 +61,7 @@ FROM (SELECT 'WK'||SUBSTR(TO_CHAR(s.order_date ,'YYYY'),3,2)||(TO_CHAR(TO_DATE(s
            INNER JOIN FPC.FPC_PRODUCT p ON d.item_code = p.prd_item_code
       WHERE SUBSTR(d.So_No,0,2) in ('2S','2F')
       --AND TO_CHAR(d.due_date ,'YYYYMMDD') >= '20230101'
-      AND SUBSTR(TO_CHAR(d.due_date ,'YYYY'),3,2)||TO_CHAR(TO_DATE(d.due_date ,'DD/MM/YYYY'),'WW') >= SUBSTR(TO_CHAR(SYSDATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(sysdate-56 ,'DD/MM/YYYY'),'WW')
+      AND SUBSTR(TO_CHAR(d.due_date ,'YYYY'),3,2)||TO_CHAR(TO_DATE(d.due_date ,'DD/MM/YYYY'),'WW') >= SUBSTR(TO_CHAR(SYSDATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(sysdate-84 ,'DD/MM/YYYY'),'WW')
       AND TO_CHAR(d.due_date ,'YYYYMMDD') not in ('20300101','20300202','20400101','20400202','20500101','20500202')--CUT PO Hold, update only due date
       AND d.So_Delete_Flag = 0
       AND d.order_qty >= 0
@@ -81,7 +81,7 @@ FROM (SELECT 'WK'||SUBSTR(TO_CHAR(s.order_date ,'YYYY'),3,2)||(TO_CHAR(TO_DATE(s
            INNER JOIN FPC.FPC_PRODUCT p ON d.item_code = p.prd_item_code
       WHERE SUBSTR(d.So_No,0,2) in ('2S','2F')
       AND TO_CHAR(d.due_date ,'YYYYMMDD') >= '20230101'
-      AND SUBSTR(TO_CHAR(d.due_date ,'YYYY'),3,2)||TO_CHAR(TO_DATE(d.due_date ,'DD/MM/YYYY'),'WW') >= SUBSTR(TO_CHAR(SYSDATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(sysdate-56 ,'DD/MM/YYYY'),'WW')
+      AND SUBSTR(TO_CHAR(d.due_date ,'YYYY'),3,2)||TO_CHAR(TO_DATE(d.due_date ,'DD/MM/YYYY'),'WW') >= SUBSTR(TO_CHAR(SYSDATE ,'YYYY'),3,2)||TO_CHAR(TO_DATE(sysdate-84 ,'DD/MM/YYYY'),'WW')
       AND TO_CHAR(d.due_date ,'YYYYMMDD') not in ('20300101','20300202','20400101','20400202','20500101','20500202')--CUT PO Hold, update only due date
       AND d.So_Delete_Flag = 0
       AND d.order_qty >= 0
@@ -209,7 +209,8 @@ if len(df) > 0:
             qty_wip = EXCLUDED.qty_wip,
             qty_rec = EXCLUDED.qty_rec,
             qty_due = EXCLUDED.qty_due,
-            qty_bal = EXCLUDED.qty_bal
+            qty_bal = EXCLUDED.qty_bal,
+            update_datetime = EXCLUDED.update_datetime
     '''
 
     # Convert DataFrame rows to a list of tuples
@@ -221,6 +222,14 @@ if len(df) > 0:
     execute_values(cur, insert_query, data_values)
 
     # Commit the changes to the database
+    conn.commit()
+
+    query6 = ('''
+    delete from pln_po_wip_fg ppwf
+    where ppwf.update_datetime != (select max(ppwf.update_datetime)  
+    from pln_po_wip_fg ppwf)
+    ''')
+    cur.execute(query6)
     conn.commit()
 
 if len(df1) > 0:
@@ -235,7 +244,8 @@ if len(df1) > 0:
         DO UPDATE
         SET request_date = EXCLUDED.request_date,
             due_date = EXCLUDED.due_date,
-            qty_bal = EXCLUDED.qty_bal
+            qty_bal = EXCLUDED.qty_bal,
+            update_datetime = EXCLUDED.update_datetime
     '''
 
     # Convert DataFrame rows to a list of tuples
@@ -248,6 +258,15 @@ if len(df1) > 0:
 
     # Commit the changes to the database
     conn.commit()
+
+    query7 = ('''
+    delete from pln_pobal_detail ppd
+    where ppd.update_datetime != (select max(ppd.update_datetime)  
+    from pln_pobal_detail ppd)
+    ''')
+    cur.execute(query7)
+    conn.commit()
+
 
 # Close the cursor and connection
 del df

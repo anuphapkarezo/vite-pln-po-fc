@@ -169,7 +169,7 @@ export default function MiniDrawer() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
-              System Recovery Computer (Dev)
+              Smart Planning
             </Typography>
           </Toolbar>
         </AppBar>
@@ -200,14 +200,6 @@ export default function MiniDrawer() {
           <DrawerHeader />
           <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route path="/computer-table" element={<ComputerTableListPage />} />
-          <Route path="/computer-recover" element={<UserEditMasterListPage />} />
-          <Route path="/table" element={<ReceivePCPage />}/>
-          <Route path="/mui_dense_table" element={<MUIDenseTablePage />}/>
-          <Route path="/data_grid" element={<DataGridPage />}/>
-          <Route path="/Search_data_grid" element={<DataGridSearchPage />}/>
-          <Route path="/apex_chart" element={<ApexChartPage />}/>
-          <Route path="/grid_box" element={<GridBoxPage />}/>
           <Route path="/pln_fc_po" element={<Planning_Forecast_POPage />}/>
         </Routes>
         </Box>

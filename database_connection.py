@@ -109,6 +109,20 @@ def connect_to_psql_230():
         print(error)
         return False, str(error)
     
+def connect_to_psql_112():
+    try:
+        #PostgreSQL database connection
+        conn = psycopg2.connect(
+            host="10.17.66.112", 
+            user="postgres",
+            password="systemfetl",
+            database="postgres_smartfactory"
+        )
+        print("connected database psql 112")
+        return conn, "112"
+    except psycopg2.Error as error:
+        print(error)
+        return False, str(error)    
 
 def task_operation_record(task, data_detail,from_db, to_db,start_time, stop_time, op_time ):
     print("save task operation")
