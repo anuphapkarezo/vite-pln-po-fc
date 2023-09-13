@@ -15,6 +15,7 @@ import {
     gridVisibleColumnFieldsSelector,
   } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close'; // Import CloseIcon
+import MenuItem from '@mui/material/MenuItem';
 
 
 export default function Planning_Forecast_POPage({ onSearch }) {
@@ -111,6 +112,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [selectedPoBal, setSelectedPoBal] = useState(null);
     const [isModalOpen_PODet, setIsModalOpen_PODet] = useState(false);
     const [fcFlatData, setFcFlatData] = useState([]);
+    const [poBalDetails , setpoBalDetails] = useState([]);
 
     function formatNumberWithCommas(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -119,7 +121,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const fetchData_week = async (
         ) => {
           try {
-            const response = await fetch(`http://localhost:3002/api/get-week`);
+            const response = await fetch(`http://localhost:3000/api/get-week`);
             if (!response.ok) {
               throw new Error('Network response was not OK');
           }
@@ -141,7 +143,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         setIsLoading(true);
-        const response = await fetch(`http://localhost:3002/api/filter-fc-by-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://localhost:3000/api/filter-fc-by-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -162,7 +164,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3002/api/filter-po-all-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://localhost:3000/api/filter-po-all-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -208,7 +210,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3002/api/filter-po-bal-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://localhost:3000/api/filter-po-bal-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -234,7 +236,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3002/api/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://localhost:3000/api/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -258,7 +260,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3002/api/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://localhost:3000/api/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -278,7 +280,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries,
     ) => {
         try {
-            const response = await fetch(`http://localhost:3002/api/filter-fc-diff-prev-curr?prd_series=${prd_series}&prd_name=${prd_name}`);
+            const response = await fetch(`http://localhost:3000/api/filter-fc-diff-prev-curr?prd_series=${prd_series}&prd_name=${prd_name}`);
             if (!response.ok) {
                 throw new Error('Network response was not OK');
             }
@@ -295,6 +297,25 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             // setIsLoading(false);
         }
     };
+
+    const fetchData_poBalDetail = async (
+        prd_name = selectedProduct, 
+        prd_series = selectedSeries) => {
+        try {
+        //   setIsLoading(true);
+          const response = await fetch(`http://localhost:3000/api/filter-po-bal-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+          if (!response.ok) {
+            throw new Error('Network response was not OK');
+          }
+          const data = await response.json();
+          setpoBalDetails(data); // Update the state variable name
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          setError('An error occurred while fetching data Po Bal Details');
+        } finally {
+        //   setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
+    };
     
     useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
         fetchData_week();
@@ -304,6 +325,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_ActualShip();
         fetchData_PDshow();
         fetchData_FcFlat();
+        fetchData_poBalDetail();
     }, [selectedProduct , selectedSeries]);
 
     useEffect(() => {
@@ -386,12 +408,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     });
     
     const columns = [
-        { field: 'productName', headerName: 'Product Name', width: 200},
-        { field: 'soLine', headerName: 'SO Line', width: 200 },
-        { field: 'soNumber', headerName: 'SO Number', width: 200 },
-        { field: 'reqDate', headerName: 'Req. Date', width: 200 },
-        { field: 'dueDate', headerName: 'Due. Date', width: 200 },
-        { field: 'qtyBal', headerName: 'Qty Bal', width: 200 },
+        { field: 'prd_name', headerName: 'Product Name', width: 200},
+        { field: 'so_line', headerName: 'SO Line', width: 200 },
+        { field: 'so_no', headerName: 'SO Number', width: 200 },
+        { field: 'request_date', headerName: 'Req. Date', width: 200 },
+        { field: 'due_date', headerName: 'Due. Date', width: 200 },
+        { field: 'qty_bal', headerName: 'Qty Bal', width: 200 },
       ];
       
       const rows = [
@@ -452,12 +474,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                         {/* <p>Loading data...{Math.round(loadingPercentage)}%</p> */}
                     </div>
                 ) : (
-                    <table className="table table-striped table-bordered table-hover blue-theme small" style={{fontSize: '10px' , fontFamily: 'Angsana News, sans-serif'}}>
+                    <table className="table table-striped table-bordered table-hover blue-theme small" style={{fontSize: '11px' , fontFamily: 'Arial, Helvetica, sans-serif'}}>
                         <thead className="thead-dark">
                         {/* className="table table-hover blue-theme table-very-small" */}
                             <tr>
                                 {/* <th>Row No</th> */}
-                                <th  style={{textAlign: 'center'}}>Period No</th>
+                                <th  style={{textAlign: 'center' , backgroundColor: '#F5F5DC' , height: '40px' , width: '110px'}}>Period No</th>
                                 {wk_no.map((week, index) => {
                                     let backgroundColor = '';
                                     let fontColor = '';
@@ -477,7 +499,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                         style={{
                                         backgroundColor: backgroundColor,
                                         color: fontColor,
-                                        textAlign: 'center'
+                                        textAlign: 'center',
+                                        width: '60px'
                                         }}>
                                         {week}
                                     </th>
@@ -486,7 +509,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 }
                             </tr>
                             <tr>
-                            <th style={{ textAlign: 'center' }}>Date</th>
+                            <th style={{ textAlign: 'center' , backgroundColor: '#F5F5DC' , height: '40px'}}>Date</th>
                                 {monDate.map((date, index) => {
                                     let backgroundColor = '';
                                     let fontColor = '';
@@ -506,7 +529,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                         style={{
                                         backgroundColor: backgroundColor,
                                         color: fontColor,
-                                        textAlign: 'center'
+                                        textAlign: 'center',
+                                       
                                         }}>
                                         {date}
                                     </th>
@@ -539,6 +563,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                         textAlign: 'center',
                                         backgroundColor: backgroundColor,
                                         color: fontColor_wk,
+                                        height: '30px'
                                         }}
                                     >
                                         {productData.qty_fc[week] !== undefined ? formatNumberWithCommas(productData.qty_fc[week]) : "0"}
@@ -548,15 +573,15 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 </tr>
                             ))}
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#CEDEBD'}}>FC_Lastest:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#CEDEBD' , height: '30px'}}>FC_Lastest :</td>
                                 {wk_no.map((week, weekIndex) => (
-                                    <td key={weekIndex} style={{ textAlign: 'center' , backgroundColor: '#CEDEBD' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}>
+                                    <td key={weekIndex} style={{ textAlign: 'center' , backgroundColor: '#CEDEBD' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal'}}>
                                     {formatNumberWithCommas(fcLatestData[week])}
                                     </td>
                                 ))}
                             </tr>
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14'}}>FC_Fluctuation:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14' ,height: '30px'}}>FC_Fluctuation :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FlatValue = fcFlatData[week];
                                     return (
@@ -572,7 +597,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
 
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFC436' }}>PO_REC:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFC436' ,height: '30px'}}>PO_REC :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const recValue = po_rec[week];
                                     return (
@@ -588,7 +613,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#F8DE22' }}>PO_DUE:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#F8DE22' ,height: '30px'}}>PO_DUE :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const dueValue = po_due[week];
                                     return (
@@ -604,7 +629,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFE17B' }}>Actual ship:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFE17B' ,height: '30px'}}>Actual ship :</td>
                                 {/* <td style={{ textAlign: 'center', backgroundColor: '#FFE17B' }}>0</td> */}
                                 {wk_no.map((week, weekIndex) => (
                                 <td
@@ -618,7 +643,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14' }}>PO_BAL:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14' ,height: '30px'}}>PO_BAL :</td>
                                 {wk_no.map((week, weekIndex) => (
                                     <td
                                         key={weekIndex}
@@ -632,7 +657,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>FG:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC',height: '30px' }}>FG :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FgValue = Fg[week];
                                     return (
@@ -648,7 +673,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>FG Unmove:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>FG Unmove :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FgValue = Fg[week];
                                     return (
@@ -664,7 +689,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>WIP:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>WIP :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const WipValue = wip[week];
                                     return (
@@ -680,7 +705,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' }}>WIP Pending:</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>WIP Pending :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const WipValue = wip[week];
                                     return (
@@ -706,41 +731,23 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                     >
-                    <Box sx={{ ...style, width: 1325 , height: 500 }}>
-                        <h5 style={{textAlign: 'center'}}>PO Balance by Details</h5>
-                        <div style={{ height: 400, width: '100%' , border: '1px solid black'}}>
+                    <Box sx={{ ...style, width: 1325 , height: 800 , backgroundColor: '#EADBC8'}}>
+                        {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
+                        <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
+                            <label htmlFor="" >PO Balance by Details</label>
+                        </div>
+                        <div style={{ height: 700, width: '100%' }}>
                             <DataGrid
-                                rows={rows}
+                                rows={poBalDetails}
                                 columns={columns}
-                                pageSize={5}
+                                loading={!poBalDetails.length} 
+                                pageSize={10}
                                 checkboxSelection
-                                autoPageSize
-                                style={{ minHeight: '400px', border: '1px solid #ccc' }}
+                                // autoPageSize
+                                style={{ minHeight: '400px', border: '1px solid black' , backgroundColor: '#F8F0E5'}}
                                 slots={{ toolbar: CustomToolbar }} 
                             />
                         </div>
-                        {/* <table>
-                            <thead >
-                                <tr style={{textAlign: 'center'}}>
-                                    <th style={{border: '1px solid black' , width: '250px'}}>Product Name</th>
-                                    <th style={{border: '1px solid black' , width: '150px'}}>SO Line</th>
-                                    <th style={{border: '1px solid black' , width: '200px'}}>SO Number</th>
-                                    <th style={{border: '1px solid black' , width: '200px'}}>Req. Date</th>
-                                    <th style={{border: '1px solid black' , width: '200px'}}>Due. Date</th>
-                                    <th style={{border: '1px solid black' , width: '200px'}}>Qty Bal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr style={{border: '1px solid black' }}>
-                                    <td>CAC-126S-1B</td>
-                                    <td style={{textAlign: 'center'}}>1</td>
-                                    <td style={{textAlign: 'center'}}>2SD05521</td>
-                                    <td>2023-09-04</td>
-                                    <td>2023-09-04</td>
-                                    <td style={{textAlign: 'center'}}>1,300</td>
-                                </tr>
-                            </tbody>
-                        </table> */}
                     </Box>
                 </Modal>
                 )}

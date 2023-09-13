@@ -113,7 +113,7 @@ memory_percent_middle= memory.percent
 
 if len(df) > 0:
     # Prepare the INSERT statement
-    table_name = "pln_actual_ship_summary"
+    table_name = "pln.pln_actual_ship_summary"
     columns = ", ".join(df.columns)
     
     insert_query = f'''
@@ -137,16 +137,16 @@ if len(df) > 0:
     conn.commit()
 
     query6 = ('''
-    delete from pln_actual_ship_summary pass
+    delete from pln.pln_actual_ship_summary pass
     where pass.update_datetime != (select max(pass.update_datetime)  
-    from pln_actual_ship_summary pass)
+    from pln.pln_actual_ship_summary pass)
     ''')
     cur.execute(query6)
     conn.commit()
 
 if len(df1) > 0:
     # Prepare the INSERT statement
-    table_name = "pln_actual_ship_detail"
+    table_name = "pln.pln_actual_ship_detail"
     columns = ", ".join(df1.columns)
     
     insert_query = f'''
@@ -173,9 +173,9 @@ if len(df1) > 0:
     conn.commit()
 
     query7 = ('''
-    delete from pln_actual_ship_detail pasd
+    delete from pln.pln_actual_ship_detail pasd
     where pasd.update_datetime != (select max(pasd.update_datetime)  
-    from pln_actual_ship_detail pasd)
+    from pln.pln_actual_ship_detail pasd)
     ''')
     cur.execute(query7)
     conn.commit()

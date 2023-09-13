@@ -5,7 +5,7 @@ import psycopg2
 from psycopg2.extras import execute_values
 import psutil
 import datetime
-from database_connection import con_oracle, connect_to_psql_localhost #กรณี Run ใน Django ต้องใส่ dot . หน้า database_connection
+from database_connection import con_oracle, connect_to_psql_112 #กรณี Run ใน Django ต้องใส่ dot . หน้า database_connection
 #Recode the start time
 start_time = datetime.datetime.now()
 print('Start:', start_time)
@@ -197,7 +197,7 @@ memory_percent_middle= memory.percent
 
 if len(df) > 0:
     # Prepare the INSERT statement
-    table_name = "pln_po_wip_fg"
+    table_name = "pln.pln_po_wip_fg"
     columns = ", ".join(df.columns)
     
     insert_query = f'''
@@ -217,7 +217,7 @@ if len(df) > 0:
     data_values = [tuple(row) for row in df.to_numpy()]
 
     # Execute the INSERT statement using execute_values for faster insertion
-    conn, to_db = connect_to_psql_localhost()
+    conn, to_db = connect_to_psql_112()
     cur = conn.cursor()
     execute_values(cur, insert_query, data_values)
 
@@ -225,16 +225,16 @@ if len(df) > 0:
     conn.commit()
 
     query6 = ('''
-    delete from pln_po_wip_fg ppwf
+    delete from pln.pln_po_wip_fg ppwf
     where ppwf.update_datetime != (select max(ppwf.update_datetime)  
-    from pln_po_wip_fg ppwf)
+    from pln.pln_po_wip_fg ppwf)
     ''')
     cur.execute(query6)
     conn.commit()
 
 if len(df1) > 0:
     # Prepare the INSERT statement
-    table_name = "pln_pobal_detail"
+    table_name = "pln.pln_pobal_detail"
     columns = ", ".join(df1.columns)
     
     insert_query = f'''
@@ -252,7 +252,7 @@ if len(df1) > 0:
     data_values1 = [tuple(row) for row in df1.to_numpy()]
 
     # Execute the INSERT statement using execute_values for faster insertion
-    conn, to_db = connect_to_psql_localhost()
+    conn, to_db = connect_to_psql_112()
     cur = conn.cursor()
     execute_values(cur, insert_query, data_values1)
 
@@ -260,9 +260,9 @@ if len(df1) > 0:
     conn.commit()
 
     query7 = ('''
-    delete from pln_pobal_detail ppd
+    delete from pln.pln_pobal_detail ppd
     where ppd.update_datetime != (select max(ppd.update_datetime)  
-    from pln_pobal_detail ppd)
+    from pln.pln_pobal_detail ppd)
     ''')
     cur.execute(query7)
     conn.commit()
