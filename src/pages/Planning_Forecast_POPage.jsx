@@ -16,6 +16,7 @@ import {
   } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close'; // Import CloseIcon
 import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
 
 
 export default function Planning_Forecast_POPage({ onSearch }) {
@@ -733,10 +734,17 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     >
                     <Box sx={{ ...style, width: 1325 , height: 800 , backgroundColor: '#EADBC8'}}>
                         {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
-                        <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
-                            <label htmlFor="" >PO Balance by Details</label>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
+                            <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
+                                <label htmlFor="" >PO Balance by Details</label>
+                            </div>
+                            <div>
+                                <IconButton onClick={closeModal}>
+                                    <CloseIcon />
+                                </IconButton>
+                            </div>
                         </div>
-                        <div style={{ height: 700, width: '100%' }}>
+                        <div style={{ height: 680, width: '100%' }}>
                             <DataGrid
                                 rows={poBalDetails}
                                 columns={columns}
