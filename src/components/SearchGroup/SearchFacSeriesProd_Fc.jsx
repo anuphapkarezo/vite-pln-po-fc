@@ -129,7 +129,7 @@ function SearchFacSeriesProd_Fc({ onSearch }) {
                                 getOptionLabel={(option) => option && option.prd_name}
                                 value={selectedProduct}
                                 onChange={handleProductChange}
-                                sx={{ width: 220 }}
+                                sx={{ width: 240 }}
                                 renderInput={(params) => <TextField {...params} label="Product" />}
                                 isOptionEqualToValue={(option, value) =>
                                     option && value && option.prd_name === value.prd_name
@@ -153,7 +153,7 @@ function SearchFacSeriesProd_Fc({ onSearch }) {
                         <Button 
                             variant="contained" 
                             size="small"
-                            style={{width: '100px', height: '35px' , marginTop: '3px', marginLeft: '10px'}}
+                            style={{width: '100px', height: '35px' , marginTop: '2px', marginLeft: '25px'}}
                             onClick={handleSearch}
                             >Search
                         </Button>

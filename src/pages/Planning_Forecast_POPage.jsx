@@ -115,6 +115,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [selectedPoBal, setSelectedPoBal] = useState(null);
     const [fcFlatData, setFcFlatData] = useState([]);
     const [wipPending, setWipPending] = useState([]);
+    const [FgUnmovement, setFgUnmovement] = useState([]);
 
     // For Modal //
     const [isModalOpen_PODet, setIsModalOpen_PODet] = useState(false);
@@ -158,7 +159,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         setRunningNumber(1); // Reset the running number to 1
         } catch (error) {
         console.error('Error fetching data:', error);
-        setError('An error occurred while fetching data Product');
+        setError('An error occurred while fetching data Forecast');
         } finally {
             setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
@@ -340,7 +341,30 @@ export default function Planning_Forecast_POPage({ onSearch }) {
           setWipPending(data); // Update the state variable name
         } catch (error) {
           console.error('Error fetching data:', error);
-          setError('An error occurred while fetching data Po Bal Details');
+          setError('An error occurred while fetching data Wip Pending');
+        } finally {
+        //   setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
+    };
+
+    const fetchData_Fgunmovement = async (
+        prd_name = selectedProduct, 
+        prd_series = selectedSeries) => {
+        try {
+        //   setIsLoading(true);
+          const response = await fetch(`http://localhost:3000/api/filter-fg-unmovement-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+          if (!response.ok) {
+            throw new Error('Network response was not OK');
+          }
+          const data = await response.json();
+          const fgUnmovementData = {};
+          data.forEach(item => {
+            fgUnmovementData[item.wk] = item.qty_hold;
+        });
+          setFgUnmovement(fgUnmovementData); // Update the state variable name
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          setError('An error occurred while fetching data FG Unmovement');
         } finally {
         //   setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
@@ -356,6 +380,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_FcFlat();
         fetchData_poBalDetail();
         fetchData_WipPending();
+        fetchData_Fgunmovement();
     }, [selectedProduct , selectedSeries]);
 
     useEffect(() => {
@@ -674,7 +699,18 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             <tr>
                                 {/* <td></td> */}
                                 <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>FG Unmovement :</td>
-                                
+                                {wk_no.map((week, weekIndex) => {
+                                    const FgUnmovementValue = FgUnmovement[week];
+                                    return (
+                                        <td
+                                            key={weekIndex}
+                                            style={{ textAlign: 'center', backgroundColor: '#FFF6DC' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
+                                        >
+                                            {FgUnmovementValue !== undefined ? formatNumberWithCommas(FgUnmovementValue) : "0"}
+                                            {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
+                                        </td>
+                                    );
+                                })}
                             </tr>
                             <tr>
                                 {/* <td></td> */}
