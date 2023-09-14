@@ -191,7 +191,7 @@ export default function MiniDrawer() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
           <Routes>
-          <Route exact path="/" element={<Home />} />
+          {/* <Route exact path="/" element={<Home />} /> */}
           <Route path="/pln_fc_po" element={<Planning_Forecast_POPage />}/>
         </Routes>
         </Box>

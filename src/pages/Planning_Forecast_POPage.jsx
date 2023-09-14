@@ -93,11 +93,13 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         );
     }
 
+    // For Select Data //
     const [error , setError] = useState(null);
     const [products , setProducts] = useState([]);
     const [runningNumber, setRunningNumber] = useState(1); //use for table
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [selectedSeries, setSelectedSeries] = useState(null);
+    // For Fetch Data //
     const [wk_no, setWeekNumbers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [po_alls , setPo_All] = useState([]);
@@ -111,8 +113,11 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [pdShow, setpdShow] = useState([]);
     const [fetchedProductData, setFetchedProductData] = useState([]);
     const [selectedPoBal, setSelectedPoBal] = useState(null);
-    const [isModalOpen_PODet, setIsModalOpen_PODet] = useState(false);
     const [fcFlatData, setFcFlatData] = useState([]);
+    const [wipPending, setWipPending] = useState([]);
+
+    // For Modal //
+    const [isModalOpen_PODet, setIsModalOpen_PODet] = useState(false);
     const [poBalDetails , setpoBalDetails] = useState([]);
 
     function formatNumberWithCommas(number) {
@@ -317,6 +322,29 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         //   setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
     };
+
+    const fetchData_WipPending = async (
+        prd_name = selectedProduct, 
+        prd_series = selectedSeries) => {
+        try {
+        //   setIsLoading(true);
+          const response = await fetch(`http://localhost:3000/api/filter-wip-pending-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+          if (!response.ok) {
+            throw new Error('Network response was not OK');
+          }
+          const data = await response.json();
+          const wipPendingData = {};
+          data.forEach(item => {
+            wipPendingData[item.wk] = item.qty_pending;
+        });
+          setWipPending(data); // Update the state variable name
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          setError('An error occurred while fetching data Po Bal Details');
+        } finally {
+        //   setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
+    };
     
     useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
         fetchData_week();
@@ -327,6 +355,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_PDshow();
         fetchData_FcFlat();
         fetchData_poBalDetail();
+        fetchData_WipPending();
     }, [selectedProduct , selectedSeries]);
 
     useEffect(() => {
@@ -362,33 +391,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         dataByProduct[product.pfd_period_no].qty_fc[product.wk] = product.qty_fc;
     });
 
-    // Function to open the modal with the selected PO_BAL value
-    const openModal = (poBalValue) => {
-        if (poBalValue > 0) {
-            setSelectedPoBal(poBalValue);
-            setIsModalOpen_PODet(true);
-        }
-    };
-
-    // Function to close the modal
-    const closeModal = () => {
-        setSelectedPoBal(null);
-        setIsModalOpen_PODet(false);
-        console.log("isModalOpen:", isModalOpen_PODet); 
-    };
-
-    const style  = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'white',
-        boxShadow: 24,
-        p: 4,
-    };
-    
-
     const fcLatestData = {};
     wk_no.forEach(week => {
         const week4Chars = week.slice(-4);
@@ -407,28 +409,40 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             return latest;
         }, 0);
     });
+
+    ////////////// Modal PO_Bal by Details //////////////////////////////////
+    const openModal_PoBalDetails = (poBalValue) => {
+        if (poBalValue > 0) {
+            setSelectedPoBal(poBalValue);
+            setIsModalOpen_PODet(true);
+        }
+    };
+    const closeModal_PoBalDetails = () => {
+        setSelectedPoBal(null);
+        setIsModalOpen_PODet(false);
+        console.log("isModalOpen:", isModalOpen_PODet); 
+    };
+
+    const style_PoBalDetails  = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'white',
+        boxShadow: 24,
+        p: 4,
+    };
     
-    const columns = [
+    const columns_PoBalDetails = [
         { field: 'prd_name', headerName: 'Product Name', width: 200},
         { field: 'so_line', headerName: 'SO Line', width: 200 },
         { field: 'so_no', headerName: 'SO Number', width: 200 },
         { field: 'request_date', headerName: 'Req. Date', width: 200 },
         { field: 'due_date', headerName: 'Due. Date', width: 200 },
         { field: 'qty_bal', headerName: 'Qty Bal', width: 200 },
-      ];
-      
-      const rows = [
-        {
-          id: 1,
-          productName: 'CAC-126S-1B',
-          soLine: 1,
-          soNumber: '2SD05521',
-          reqDate: '2023-09-04',
-          dueDate: '2023-09-04',
-          qtyBal: 1300,
-        },
-      ];
-    
+    ];
+
     return (
         <div className='container'>
             {/* style={{ display: 'flex', flexDirection: 'row' }} */}
@@ -449,21 +463,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                         </div>
                         ))
                     )}
-                    {/* {fetchedProductData ? (
-                        chunkArray(fetchedProductData, 8).map((chunk, index) => (
-                        <div key={index} style={{ backgroundColor: '#FFFFDD', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>
-                            {chunk.join(' : ')}
-                        </div>
-                        ))
-                    ) : (
-                        // Render empty content when fetchedProductData is empty
-                        null
-                    )} */}
-                    {/* {chunkArray(fetchedProductData, 8).map((chunk, index) => (
-                        <div key={index} style={{backgroundColor: '#FFFFDD' , fontSize: '14px' , fontFamily: 'Angsana News, sans-serif' , color: '#952323'}}>
-                        {chunk.join(' : ')}
-                        </div>
-                    ))} */}
                 </div>
             </div>
             
@@ -650,7 +649,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                         key={weekIndex}
                                         style={{cursor: "pointer" , textAlign: 'center',backgroundColor: '#FD8D14' , color: weekIndex === 12 ? '#0E21A0' : 'black',fontWeight: weekIndex === 12 ? 'bold' : 'normal'
                                         }}
-                                        onClick={() => openModal(poBalData[week])} // Open modal on click
+                                        onClick={() => openModal_PoBalDetails(poBalData[week])} // Open modal on click
                                     >
                                         {poBalData[week] !== undefined ? formatNumberWithCommas(poBalData[week]) : "0"}
                                     </td>
@@ -674,19 +673,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>FG Unmove :</td>
-                                {wk_no.map((week, weekIndex) => {
-                                    const FgValue = Fg[week];
-                                    return (
-                                        <td
-                                            key={weekIndex}
-                                            style={{ textAlign: 'center', backgroundColor: '#FFF6DC' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
-                                        >
-                                            {FgValue !== undefined ? formatNumberWithCommas(FgValue) : "0"}
-                                            {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
-                                        </td>
-                                    );
-                                })}
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>FG Unmovement :</td>
+                                
                             </tr>
                             <tr>
                                 {/* <td></td> */}
@@ -708,15 +696,13 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 {/* <td></td> */}
                                 <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>WIP Pending :</td>
                                 {wk_no.map((week, weekIndex) => {
-                                    const WipValue = wip[week];
                                     return (
-                                        <td
+                                        <th
                                             key={weekIndex}
                                             style={{ textAlign: 'center', backgroundColor: '#FFF6DC' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
                                         >
-                                            {WipValue !== undefined ? formatNumberWithCommas(WipValue) : "0"}
-                                            {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
-                                        </td>
+                                            {wipPending && wipPending.length > 0 && weekIndex === 12 ? formatNumberWithCommas(wipPending[0].qty_pending) : "0"}
+                                        </th>
                                     );
                                 })}
                             </tr>
@@ -728,18 +714,18 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                 {isModalOpen_PODet && (
                     <Modal
                     open={isModalOpen_PODet}
-                    onClose={closeModal}
+                    onClose={closeModal_PoBalDetails}
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                     >
-                    <Box sx={{ ...style, width: 1325 , height: 800 , backgroundColor: '#EADBC8'}}>
+                    <Box sx={{ ...style_PoBalDetails, width: 1325 , height: 800 , backgroundColor: '#FFB000'}}>
                         {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
                             <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
                                 <label htmlFor="" >PO Balance by Details</label>
                             </div>
                             <div>
-                                <IconButton onClick={closeModal}>
+                                <IconButton onClick={closeModal_PoBalDetails}>
                                     <CloseIcon />
                                 </IconButton>
                             </div>
@@ -747,18 +733,20 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                         <div style={{ height: 680, width: '100%' }}>
                             <DataGrid
                                 rows={poBalDetails}
-                                columns={columns}
+                                columns={columns_PoBalDetails}
                                 loading={!poBalDetails.length} 
                                 pageSize={10}
                                 checkboxSelection
                                 // autoPageSize
-                                style={{ minHeight: '400px', border: '1px solid black' , backgroundColor: '#F8F0E5'}}
+                                style={{ minHeight: '400px', border: '1px solid black' , backgroundColor: '#FFCF9D'}}
                                 slots={{ toolbar: CustomToolbar }} 
                             />
                         </div>
                     </Box>
                 </Modal>
                 )}
+
+                
             </div>
         </div>
     );

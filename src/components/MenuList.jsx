@@ -14,7 +14,7 @@ import WaterfallChartRoundedIcon from '@mui/icons-material/WaterfallChartRounded
 const MenuList = ({ open }) => {
   return (
     <List>
-        <ListItem disablePadding sx={{ display: 'block',color: 'black' }} component={Link} to="/">
+        {/* <ListItem disablePadding sx={{ display: 'block',color: 'black' }} component={Link} to="/">
             <ListItemButton
                 sx={{
                     minHeight: 48,
@@ -38,7 +38,7 @@ const MenuList = ({ open }) => {
                 </ListItemIcon>
                 <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
-        </ListItem>
+        </ListItem> */}
         <ListItem disablePadding sx={{ display: 'block' ,color: 'black'}} component={Link} to="/pln_fc_po">
                 <ListItemButton
                 sx={{
@@ -61,7 +61,7 @@ const MenuList = ({ open }) => {
                     >
                     <WaterfallChartRoundedIcon />
                 </ListItemIcon>
-                <ListItemText primary="Planning / Forecast Vs PO" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary="Forecast Vs PO" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
         </ListItem>
     </List>
