@@ -480,10 +480,10 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                 />
                 <div id="pdShowLabel" style={{width: '565px'}}>
                     {selectedProduct === "Product" ? (
-                        <div style={{ backgroundColor: '#FFFFDD', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>{selectedSeries}</div> // Render an empty div if selectedProduct is "Empty"
+                        <div style={{ backgroundColor: '#E4F1FF', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>{selectedSeries}</div> // Render an empty div if selectedProduct is "Empty"
                     ) : (
                         chunkArray(fetchedProductData, 8).map((chunk, index) => (
-                        <div key={index} style={{ backgroundColor: '#FFFFDD', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>
+                        <div key={index} style={{ backgroundColor: '#E4F1FF', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>
                             {chunk.join(' : ')}
                         </div>
                         ))
@@ -504,17 +504,17 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                         {/* className="table table-hover blue-theme table-very-small" */}
                             <tr>
                                 {/* <th>Row No</th> */}
-                                <th  style={{textAlign: 'center' , backgroundColor: '#F5F5DC' , height: '40px' , width: '110px'}}>Period No</th>
+                                <th  style={{textAlign: 'center' , backgroundColor: '#AED2FF' , height: '40px' , width: '110px'}}>Week</th>
                                 {wk_no.map((week, index) => {
                                     let backgroundColor = '';
                                     let fontColor = '';
 
                                     if (index < 12) {
-                                    backgroundColor = '#FFDBAA';
+                                    backgroundColor = '#E4F1FF';
                                     } else if (index > 12) {
-                                    backgroundColor = '#279EFF';
+                                    backgroundColor = '#E4F1FF';
                                     } else {
-                                    backgroundColor = '#5C8374',
+                                    backgroundColor = '#279EFF',
                                     fontColor = '#F3FDE8';
                                     }
 
@@ -534,17 +534,17 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 }
                             </tr>
                             <tr>
-                            <th style={{ textAlign: 'center' , backgroundColor: '#F5F5DC' , height: '40px'}}>Date</th>
+                            <th style={{ textAlign: 'center' , backgroundColor: '#AED2FF' , height: '40px'}}>Period No. / Date</th>
                                 {monDate.map((date, index) => {
                                     let backgroundColor = '';
                                     let fontColor = '';
 
                                     if (index < 12) {
-                                    backgroundColor = '#FFDBAA';
+                                    backgroundColor = '#E4F1FF';
                                     } else if (index > 12) {
-                                    backgroundColor = '#279EFF';
+                                    backgroundColor = '#E4F1FF';
                                     } else {
-                                    backgroundColor = '#5C8374',
+                                    backgroundColor = '#279EFF',
                                     fontColor = '#F3FDE8';
                                     }
 
@@ -575,7 +575,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     let fontColor_wk = ''
 
                                     if (weekIndex === 12) {
-                                    backgroundColor = '#CEDEBD'; 
+                                    backgroundColor = '#CEE6F3'; 
                                     fontColor_wk = '#0E21A0';
                                     } else if (Period4Chars === Week4Chars) {
                                         backgroundColor = '#B9B4C7'; // Set background color to your desired color if weekIndex is 12
@@ -598,21 +598,30 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 </tr>
                             ))}
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#CEDEBD' , height: '30px'}}>FC_Lastest :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#AED2FF' , height: '30px'}}>FC_Lastest :</td>
                                 {wk_no.map((week, weekIndex) => (
-                                    <td key={weekIndex} style={{ textAlign: 'center' , backgroundColor: '#CEDEBD' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal'}}>
-                                    {formatNumberWithCommas(fcLatestData[week])}
+                                    <td 
+                                        key={weekIndex} 
+                                        style={{ textAlign: 'center' , 
+                                        backgroundColor: '#AED2FF' , 
+                                        color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                        fontWeight: weekIndex === 12 ? 'bold' : 'normal'}}>
+                                        {formatNumberWithCommas(fcLatestData[week])}
                                     </td>
                                 ))}
                             </tr>
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14' ,height: '30px'}}>FC_Fluctuation :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>FC_Fluctuation :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FlatValue = fcFlatData[week];
+                                    const isNegative = FlatValue && FlatValue.charAt(0) === '-';
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', backgroundColor: '#FD8D14' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
+                                            style={{ textAlign: 'center', 
+                                            backgroundColor: '#E4F1FF' , 
+                                            color: isNegative ? 'red' : weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
                                         >
                                             {FlatValue !== undefined ? formatNumberWithCommas(FlatValue) : "0"}
                                         </td>
@@ -622,13 +631,16 @@ export default function Planning_Forecast_POPage({ onSearch }) {
 
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFC436' ,height: '30px'}}>PO_REC :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#AED2FF' ,height: '30px'}}>PO_REC :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const recValue = po_rec[week];
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', backgroundColor: '#FFC436' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
+                                            style={{ textAlign: 'center', 
+                                            backgroundColor: '#AED2FF' , 
+                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
                                         >
                                             {recValue !== undefined ? formatNumberWithCommas(recValue) : "0"}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
@@ -638,13 +650,16 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#F8DE22' ,height: '30px'}}>PO_DUE :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>PO_DUE :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const dueValue = po_due[week];
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', backgroundColor: '#F8DE22' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
+                                            style={{ textAlign: 'center', 
+                                            backgroundColor: '#E4F1FF' , 
+                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
                                         >
                                             {dueValue !== undefined ? formatNumberWithCommas(dueValue) : "0"}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
@@ -654,12 +669,14 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFE17B' ,height: '30px'}}>Actual ship :</td>
-                                {/* <td style={{ textAlign: 'center', backgroundColor: '#FFE17B' }}>0</td> */}
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#AED2FF' ,height: '30px'}}>Actual ship :</td>
                                 {wk_no.map((week, weekIndex) => (
                                 <td
                                     key={weekIndex}
-                                    style={{textAlign: 'center', backgroundColor: '#FFE17B', color: weekIndex === 12 ? '#0E21A0' : 'black', fontWeight: weekIndex === 12 ? 'bold' : 'normal'
+                                    style={{textAlign: 'center', 
+                                    backgroundColor: '#AED2FF', 
+                                    color: weekIndex === 12 ? '#0E21A0' : 'black', 
+                                    fontWeight: weekIndex === 12 ? 'bold' : 'normal'
                                     }}
                                 >
                                     {actualShips[week] !== undefined ? formatNumberWithCommas(actualShips[week]) : "0"}
@@ -668,11 +685,16 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FD8D14' ,height: '30px'}}>PO_BAL :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>PO_BAL :</td>
                                 {wk_no.map((week, weekIndex) => (
                                     <td
                                         key={weekIndex}
-                                        style={{cursor: "pointer" , textAlign: 'center',backgroundColor: '#FD8D14' , color: weekIndex === 12 ? '#0E21A0' : 'black',fontWeight: weekIndex === 12 ? 'bold' : 'normal'
+                                        style={{cursor: poBalData[week] > 0 ? "pointer" : "default" ,
+                                                textDecoration: poBalData[week] > 0 ? 'underline double' : 'none',
+                                                textAlign: 'center',
+                                                backgroundColor: '#E4F1FF' , 
+                                                color: weekIndex === 12 ? '#0E21A0' : 'black',
+                                                fontWeight: weekIndex === 12 ? 'bold' : 'normal'
                                         }}
                                         onClick={() => openModal_PoBalDetails(poBalData[week])} // Open modal on click
                                     >
@@ -682,13 +704,16 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC',height: '30px' }}>FG :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF',height: '30px' }}>FG :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FgValue = Fg[week];
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', backgroundColor: '#FFF6DC' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
+                                            style={{ textAlign: 'center', 
+                                            backgroundColor: '#E4F1FF' , 
+                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
                                         >
                                             {FgValue !== undefined ? formatNumberWithCommas(FgValue) : "0"}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
@@ -698,13 +723,16 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>FG Unmovement :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>FG Unmovement :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FgUnmovementValue = FgUnmovement[week];
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', backgroundColor: '#FFF6DC' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
+                                            style={{ textAlign: 'center', 
+                                            backgroundColor: '#E4F1FF' , 
+                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
                                         >
                                             {FgUnmovementValue !== undefined ? formatNumberWithCommas(FgUnmovementValue) : "0"}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
@@ -714,13 +742,16 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>WIP :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>WIP :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const WipValue = wip[week];
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', backgroundColor: '#FFF6DC' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
+                                            style={{ textAlign: 'center', 
+                                            backgroundColor: '#E4F1FF' , 
+                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
                                         >
                                             {WipValue !== undefined ? formatNumberWithCommas(WipValue) : "0"}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
@@ -730,12 +761,15 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#FFF6DC' ,height: '30px'}}>WIP Pending :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>WIP Pending :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     return (
                                         <th
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', backgroundColor: '#FFF6DC' , color: weekIndex === 12 ? '#0E21A0' : 'black' , fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
+                                            style={{ textAlign: 'center', 
+                                            backgroundColor: '#E4F1FF' , 
+                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
                                         >
                                             {wipPending && wipPending.length > 0 && weekIndex === 12 ? formatNumberWithCommas(wipPending[0].qty_pending) : "0"}
                                         </th>
@@ -754,7 +788,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                     >
-                    <Box sx={{ ...style_PoBalDetails, width: 1325 , height: 800 , backgroundColor: '#FFB000'}}>
+                    <Box sx={{ ...style_PoBalDetails, width: 1325 , height: 800 , backgroundColor: '#AED2FF'}}>
                         {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
                             <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
@@ -774,7 +808,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 pageSize={10}
                                 checkboxSelection
                                 // autoPageSize
-                                style={{ minHeight: '400px', border: '1px solid black' , backgroundColor: '#FFCF9D'}}
+                                style={{ minHeight: '400px', border: '1px solid black' , backgroundColor: '#E4F1FF'}}
                                 slots={{ toolbar: CustomToolbar }} 
                             />
                         </div>
