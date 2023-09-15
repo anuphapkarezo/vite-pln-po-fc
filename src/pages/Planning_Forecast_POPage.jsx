@@ -101,6 +101,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [selectedSeries, setSelectedSeries] = useState(null);
     const [selectedPoBal, setSelectedPoBal] = useState(null);
     const [selectedFgDet, setSelectedFgDet] = useState(null);
+    const [selectedFgunDet, setSelectedFgunDet] = useState(null);
+    const [selectedWipPenDet, setSelectedWipPenDet] = useState(null);
 
     // For Fetch Data //
     const [wk_no, setWeekNumbers] = useState([]);
@@ -118,6 +120,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [fcFlatData, setFcFlatData] = useState([]);
     const [wipPending, setWipPending] = useState([]);
     const [FgUnmovement, setFgUnmovement] = useState([]);
+    const [FgUnmovementDet, setFgUnmovementDet] = useState([]);
 
     // For Modal //
     const [isModalOpen_PODet, setIsModalOpen_PODet] = useState(false);
@@ -125,6 +128,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     //
     const [isModalOpen_FGDet, setIsModalOpen_FGDet] = useState(false);
     const [FGDetails , setFGDetails] = useState([]);
+    //
+    const [isModalOpen_FGunDet, setIsModalOpen_FGunDet] = useState(false);
+    const [FGunDetails , setFGunDetails] = useState([]);
+    //
+    const [isModalOpen_WipPenDet, setIsModalOpen_WipPenDet] = useState(false);
+    const [WipPenDetails , setWipPenDetails] = useState([]);
 
     function formatNumberWithCommas(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -398,6 +407,56 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             // setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
     };
+
+    const fetchData_FGunDetails = async (
+        prd_name = selectedProduct,
+        prd_series = selectedSeries,
+    ) => {
+    try {
+        // setIsLoading(true);
+        const response = await fetch(`http://localhost:3000/api/filter-fg-unmovement-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        if (!response.ok) {
+            throw new Error('Network response was not OK');
+        }
+        const data = await response.json();
+        // Add a unique id property to each row
+        const rowsWithId = data.map((row, index) => ({
+            ...row,
+            id: index, // You can use a better unique identifier here if available
+        }));
+        setFGunDetails(rowsWithId);
+        } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('An error occurred while fetching data FG Unmovement Details');
+        } finally {
+            // setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
+    };
+
+    const fetchData_WipPenDetails = async (
+        prd_name = selectedProduct,
+        prd_series = selectedSeries,
+    ) => {
+    try {
+        // setIsLoading(true);
+        const response = await fetch(`http://localhost:3000/api/filter-wip-pending-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        if (!response.ok) {
+            throw new Error('Network response was not OK');
+        }
+        const data = await response.json();
+        // Add a unique id property to each row
+        const rowsWithId = data.map((row, index) => ({
+            ...row,
+            id: index, // You can use a better unique identifier here if available
+        }));
+        setWipPenDetails(rowsWithId);
+        } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('An error occurred while fetching data Wip Pending Details');
+        } finally {
+            // setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
+    };
     
     useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
         fetchData_week();
@@ -411,6 +470,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_WipPending();
         fetchData_Fgunmovement();
         fetchData_FGDetails();
+        fetchData_FGunDetails();
+        fetchData_WipPenDetails();
     }, [selectedProduct , selectedSeries]);
 
     useEffect(() => {
@@ -463,7 +524,18 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             return latest;
         }, 0);
     });
-
+    
+    // Modal //
+    const style_Modal  = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'white',
+        boxShadow: 24,
+        p: 4,
+    };
     ////////////// Modal PO_Bal by Details //////////////////////////////////
     const openModal_PoBalDetails = (poBalValue) => {
         if (poBalValue > 0) {
@@ -474,18 +546,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const closeModal_PoBalDetails = () => {
         setSelectedPoBal(null);
         setIsModalOpen_PODet(false);
-        console.log("isModalOpen:", isModalOpen_PODet); 
-    };
-
-    const style_PoBalDetails  = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'white',
-        boxShadow: 24,
-        p: 4,
     };
     
     const columns_PoBalDetails = [
@@ -507,18 +567,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const closeModal_FGDetails = () => {
         setSelectedFgDet(null);
         setIsModalOpen_FGDet(false);
-        console.log("isModalOpen:", isModalOpen_FGDet); 
-    };
-
-    const style_FGDetails  = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'white',
-        boxShadow: 24,
-        p: 4,
     };
     
     const columns_FGDetails = [
@@ -528,6 +576,50 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         { field: 'ld_status', headerName: 'Status', width: 200 },
         { field: 'qty_good', headerName: 'Qty Good', width: 200 },
     ];
+
+    ////////////// Modal FG Unmovement by Details //////////////////////////////////
+    const openModal_FGunDetails = (FgunDetValue) => {
+        if (FgunDetValue > 0) {
+            setSelectedFgunDet(FgunDetValue);
+            setIsModalOpen_FGunDet(true);
+        }
+    };
+    const closeModal_FGunDetails = () => {
+        setSelectedFgunDet(null);
+        setIsModalOpen_FGunDet(false);
+    };
+    
+    const columns_FGunDetails = [
+        { field: 'prd_name', headerName: 'Product Name', width: 200},
+        { field: 'prd_series', headerName: 'Product Series', width: 200 },
+        { field: 'ld_loc', headerName: 'Location', width: 200 },
+        { field: 'ld_status', headerName: 'Status', width: 200 },
+        { field: 'qty_hold', headerName: 'Qty Hold', width: 200 },
+    ];
+
+    ////////////// Modal Wip Pending by Details //////////////////////////////////
+    const openModal_WipPenDetails = (WipPenDetValue) => {
+        if (WipPenDetValue > 0) {
+            setSelectedWipPenDet(WipPenDetValue);
+            setIsModalOpen_WipPenDet(true);
+        }
+    };
+    const closeModal_WipPenDetails = () => {
+        setSelectedWipPenDet(null);
+        setIsModalOpen_WipPenDet(false);
+    };
+    
+    const columns_WipPenDetails = [
+        { field: 'prd_name', headerName: 'Product Name', width: 200},
+        { field: 'lot', headerName: 'Lot No.', width: 200 },
+        { field: 'prd_series', headerName: 'Product Series', width: 100 },
+        { field: 'factory', headerName: 'Factory', width: 100 },
+        { field: 'unit', headerName: 'Unit', width: 100 },
+        { field: 'process', headerName: 'Process', width: 100 },
+        { field: 'pending_reason', headerName: 'Reason', width: 200 },
+        { field: 'qty_pending', headerName: 'Qty Pending', width: 200 },
+    ];
+
 
     return (
         <div className='container'>
@@ -779,8 +871,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                                     color: weekIndex === 12 ? '#0E21A0' : 'black' , 
                                                     fontWeight: weekIndex === 12 ? 'bold' : 'normal',
                                                     fontSize: weekIndex === 12 ? '12px' : 'normal'
-                                        }}
-                                        onClick={() => openModal_FGDetails(Fg[week])} // Open modal on click
+                                                    }}
+                                                    onClick={() => openModal_FGDetails(Fg[week])} // Open modal on click
                                         >
                                             {FgValue !== undefined ? formatNumberWithCommas(FgValue) : "0"}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
@@ -796,10 +888,15 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', 
-                                            backgroundColor: '#E4F1FF' , 
-                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
-                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
+                                            style={{ cursor: FgUnmovement[week] > 0 ? "pointer" : "default" ,
+                                                    textDecoration: FgUnmovement[week] > 0 ? 'underline' : 'none',  
+                                                    textAlign: 'center', 
+                                                    backgroundColor: '#E4F1FF' , 
+                                                    color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                                    fontWeight: weekIndex === 12 ? 'bold' : 'normal',
+                                                    fontSize: weekIndex === 12 ? '12px' : 'normal' 
+                                                    }}
+                                                    onClick={() => openModal_FGunDetails(FgUnmovement[week])} // Open modal on click
                                         >
                                             {FgUnmovementValue !== undefined ? formatNumberWithCommas(FgUnmovementValue) : "0"}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
@@ -833,10 +930,15 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     return (
                                         <th
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', 
-                                            backgroundColor: '#E4F1FF' , 
-                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
-                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
+                                            style={{ cursor: wipPending && wipPending.length > 0 ? "pointer" : "default" ,
+                                                    textDecoration: wipPending && wipPending.length > 0 ? 'underline' : 'none',
+                                                    textAlign: 'center', 
+                                                    backgroundColor: '#E4F1FF' , 
+                                                    color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                                    fontWeight: weekIndex === 12 ? 'bold' : 'normal' ,
+                                                    fontSize: weekIndex === 12 ? '12px' : 'normal'  
+                                                }}
+                                                onClick={() => openModal_WipPenDetails(wipPending.length)} // Open modal on click
                                         >
                                             {wipPending && wipPending.length > 0 && weekIndex === 12 ? formatNumberWithCommas(wipPending[0].qty_pending) : "0"}
                                         </th>
@@ -855,7 +957,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                     >
-                    <Box sx={{ ...style_PoBalDetails, width: 1325 , height: 800 , backgroundColor: '#AED2FF'}}>
+                    <Box sx={{ ...style_Modal, width: 1325 , height: 800 , backgroundColor: '#AED2FF'}}>
                         {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
                             <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
@@ -869,7 +971,11 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                         </div>
                         <div style={{ height: 680, width: '100%' }}>
                             <DataGrid
-                                rows={poBalDetails}
+                                // rows={poBalDetails}
+                                rows={poBalDetails.map((row) => ({
+                                    ...row,
+                                    qty_bal: formatNumberWithCommas(row.qty_bal), // Format the qty_pending field
+                                }))}
                                 columns={columns_PoBalDetails}
                                 loading={!poBalDetails.length} 
                                 pageSize={10}
@@ -890,7 +996,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                     >
-                    <Box sx={{ ...style_FGDetails, width: 1120 , height: 800 , backgroundColor: '#AED2FF'}}>
+                    <Box sx={{ ...style_Modal, width: 1120 , height: 800 , backgroundColor: '#AED2FF'}}>
                         {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
                             <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
@@ -904,8 +1010,90 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                         </div>
                         <div style={{ height: 680, width: '100%' }}>
                             <DataGrid
-                                rows={FGDetails}
+                                // rows={FGDetails}
+                                rows={FGDetails.map((row) => ({
+                                    ...row,
+                                    qty_good: formatNumberWithCommas(row.qty_good), // Format the qty_pending field
+                                }))}
                                 columns={columns_FGDetails}
+                                // loading={!FGDetails.length} 
+                                pageSize={10}
+                                checkboxSelection
+                                // autoPageSize
+                                style={{ minHeight: '400px', border: '1px solid black' , backgroundColor: '#E4F1FF'}}
+                                slots={{ toolbar: CustomToolbar }} 
+                            />
+                        </div>
+                    </Box>
+                </Modal>
+                )}
+
+                {isModalOpen_FGunDet && (
+                    <Modal
+                    open={isModalOpen_FGunDet}
+                    onClose={closeModal_FGunDetails}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                    >
+                    <Box sx={{ ...style_Modal, width: 1120 , height: 800 , backgroundColor: '#AED2FF'}}>
+                        {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
+                            <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
+                                <label htmlFor="" >FG Unmovement by Details</label>
+                            </div>
+                            <div>
+                                <IconButton onClick={closeModal_FGunDetails}>
+                                    <CloseIcon />
+                                </IconButton>
+                            </div>
+                        </div>
+                        <div style={{ height: 680, width: '100%' }}>
+                            <DataGrid
+                                // rows={FGunDetails}
+                                rows={FGunDetails.map((row) => ({
+                                    ...row,
+                                    qty_hold: formatNumberWithCommas(row.qty_hold), // Format the qty_pending field
+                                }))}
+                                columns={columns_FGunDetails}
+                                // loading={!FGDetails.length} 
+                                pageSize={10}
+                                checkboxSelection
+                                // autoPageSize
+                                style={{ minHeight: '400px', border: '1px solid black' , backgroundColor: '#E4F1FF'}}
+                                slots={{ toolbar: CustomToolbar }} 
+                            />
+                        </div>
+                    </Box>
+                </Modal>
+                )}
+
+                {isModalOpen_WipPenDet && (
+                    <Modal
+                    open={isModalOpen_WipPenDet}
+                    onClose={closeModal_WipPenDetails}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                    >
+                    <Box sx={{ ...style_Modal, width: 1330 , height: 800 , backgroundColor: '#AED2FF'}}>
+                        {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
+                            <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
+                                <label htmlFor="" >WIP Pending by Details</label>
+                            </div>
+                            <div>
+                                <IconButton onClick={closeModal_WipPenDetails}>
+                                    <CloseIcon />
+                                </IconButton>
+                            </div>
+                        </div>
+                        <div style={{ height: 680, width: '100%' }}>
+                            <DataGrid
+                                // rows={WipPenDetails}
+                                rows={WipPenDetails.map((row) => ({
+                                    ...row,
+                                    qty_pending: formatNumberWithCommas(row.qty_pending), // Format the qty_pending field
+                                }))}
+                                columns={columns_WipPenDetails}
                                 // loading={!FGDetails.length} 
                                 pageSize={10}
                                 checkboxSelection

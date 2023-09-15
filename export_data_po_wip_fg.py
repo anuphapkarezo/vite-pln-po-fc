@@ -100,6 +100,8 @@ FROM (SELECT 'WK'||SUBSTR(TO_CHAR(s.order_date ,'YYYY'),3,2)||(TO_CHAR(TO_DATE(s
     FROM plan.s_qad_ld_det f
          INNER JOIN fpc.fpc_product p on f.LD_PART = p.prd_item_code
     WHERE f.LD_STATUS = 'GOOD'
+    AND f.LD_DOMAIN = '2000'
+    AND f.LD_SITE = '2100'
     GROUP BY 'WK'||SUBSTR(TO_CHAR(SYSDATE,'YYYY'),3,2)||(TO_CHAR(TO_DATE(SYSDATE,'DD/MM/YYYY'),'WW'))
            ,p.prd_name
            ,SUBSTR(p.prd_name,1,3)
