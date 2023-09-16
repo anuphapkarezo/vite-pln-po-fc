@@ -27,7 +27,7 @@ query4 = ('''
        ,SUM(POWIP.QTY_REC) AS QTY_REC
        ,SUM(POWIP.QTY_DUE) AS QTY_DUE
        ,SUM(POWIP.QTY_BAL) AS QTY_BAL
-FROM (SELECT 'WK'||SUBSTR(TO_CHAR(s.order_date ,'YYYY'),3,2)||(TO_CHAR(TO_DATE(s.order_date ,'DD/MM/YYYY'),'WW')) AS  WK
+    FROM (SELECT 'WK'||SUBSTR(TO_CHAR(s.order_date ,'YYYY'),3,2)||(TO_CHAR(TO_DATE(s.order_date ,'DD/MM/YYYY'),'WW')) AS  WK
              ,p.prd_name
              ,SUBSTR(p.prd_name,1,3) AS PD_SERIES
              ,0 AS QTY_FG
@@ -152,6 +152,13 @@ c.execute(query4)
 result = c.fetchall()
 col_names = [desc[0] for desc in c.description]  # columns name PostgreSQL
 df = pd.DataFrame(result, columns=col_names)
+# filtered_df_general = df[(df['PD_SERIES'] != 'RGO') & (df['PD_SERIES'] != 'RGP')]
+# filtered_df_rgo = df[df['PD_SERIES'] == 'RGO']
+# filtered_df_rgp = df[df['PD_SERIES'] == 'RGP']
+
+# filtered_df_general.to_csv('filtered_df_general.csv', index=False)
+# filtered_df_rgo.to_csv('filtered_df_rgo.csv', index=False)
+# filtered_df_rgp.to_csv('filtered_df_rgp.csv', index=False)
 
 query5 = ('''
     SELECT d.so_no
@@ -225,6 +232,64 @@ if len(df) > 0:
 
     # Commit the changes to the database
     conn.commit()
+
+# if len(filtered_df_rgo) > 0:
+#     # Prepare the INSERT statement
+#     table_name = "pln.pln_po_wip_fg"
+#     columns = ", ".join(filtered_df_rgo.columns)
+    
+#     insert_query = f'''
+#         INSERT INTO {table_name} ({columns})
+#         VALUES %s
+#         ON CONFLICT (wk , prd_name , pd_series) 
+#         DO UPDATE
+#         SET qty_fg = EXCLUDED.qty_fg,
+#             qty_wip = EXCLUDED.qty_wip,
+#             qty_rec = EXCLUDED.qty_rec,
+#             qty_due = EXCLUDED.qty_due,
+#             qty_bal = EXCLUDED.qty_bal,
+#             update_datetime = EXCLUDED.update_datetime
+#     '''
+
+#     # Convert DataFrame rows to a list of tuples
+#     data_values2 = [tuple(row) for row in filtered_df_rgo.to_numpy()]
+
+#     # Execute the INSERT statement using execute_values for faster insertion
+#     conn, to_db = connect_to_psql_112()
+#     cur = conn.cursor()
+#     execute_values(cur, insert_query, data_values2)
+
+#     # Commit the changes to the database
+#     conn.commit()
+
+# if len(filtered_df_rgp) > 0:
+#     # Prepare the INSERT statement
+#     table_name = "pln.pln_po_wip_fg"
+#     columns = ", ".join(filtered_df_rgp.columns)
+    
+#     insert_query = f'''
+#         INSERT INTO {table_name} ({columns})
+#         VALUES %s
+#         ON CONFLICT (wk , prd_name , pd_series) 
+#         DO UPDATE
+#         SET qty_fg = EXCLUDED.qty_fg,
+#             qty_wip = EXCLUDED.qty_wip,
+#             qty_rec = EXCLUDED.qty_rec,
+#             qty_due = EXCLUDED.qty_due,
+#             qty_bal = EXCLUDED.qty_bal,
+#             update_datetime = EXCLUDED.update_datetime
+#     '''
+
+#     # Convert DataFrame rows to a list of tuples
+#     data_values3 = [tuple(row) for row in filtered_df_rgp.to_numpy()]
+
+#     # Execute the INSERT statement using execute_values for faster insertion
+#     conn, to_db = connect_to_psql_112()
+#     cur = conn.cursor()
+#     execute_values(cur, insert_query, data_values3)
+
+#     # Commit the changes to the database
+#     conn.commit()
 
     query6 = ('''
     delete from pln.pln_po_wip_fg ppwf

@@ -103,6 +103,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [selectedFgDet, setSelectedFgDet] = useState(null);
     const [selectedFgunDet, setSelectedFgunDet] = useState(null);
     const [selectedWipPenDet, setSelectedWipPenDet] = useState(null);
+    const [selectedWipDet, setSelectedWipDet] = useState(null);
 
     // For Fetch Data //
     const [wk_no, setWeekNumbers] = useState([]);
@@ -120,7 +121,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [fcFlatData, setFcFlatData] = useState([]);
     const [wipPending, setWipPending] = useState([]);
     const [FgUnmovement, setFgUnmovement] = useState([]);
-    const [FgUnmovementDet, setFgUnmovementDet] = useState([]);
+    // const [FgUnmovementDet, setFgUnmovementDet] = useState([]);
 
     // For Modal //
     const [isModalOpen_PODet, setIsModalOpen_PODet] = useState(false);
@@ -134,6 +135,10 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     //
     const [isModalOpen_WipPenDet, setIsModalOpen_WipPenDet] = useState(false);
     const [WipPenDetails , setWipPenDetails] = useState([]);
+    //
+    const [isModalOpen_WipDet, setIsModalOpen_WipDet] = useState(false);
+    const [WipDetails , setWipDetails] = useState([]);
+    
 
     function formatNumberWithCommas(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -318,6 +323,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         }
     };
 
+    const [sumQtyBal, setSumQtyBal] = useState(0);
     const fetchData_poBalDetail = async (
         prd_name = selectedProduct, 
         prd_series = selectedSeries) => {
@@ -329,6 +335,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
           }
           const data = await response.json();
           setpoBalDetails(data); // Update the state variable name
+          const sum = data.reduce((total, item) => total + item.qty_bal, 0);
+          setSumQtyBal(sum);
         } catch (error) {
           console.error('Error fetching data:', error);
           setError('An error occurred while fetching data Po Bal Details');
@@ -383,6 +391,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         }
     };
 
+    const [sumQtyFg , setsumQtyFg] = useState(0);
     const fetchData_FGDetails = async (
         prd_name = selectedProduct,
         prd_series = selectedSeries,
@@ -400,6 +409,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             id: index, // You can use a better unique identifier here if available
         }));
         setFGDetails(rowsWithId);
+        const sum = data.reduce((total , item) => total + item.qty_good , 0)
+        setsumQtyFg(sum);
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data FG Details');
@@ -457,6 +468,34 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             // setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
     };
+
+    const [sumQtyWip , setsumQtyWip] = useState(0);
+    const fetchData_WipDetails = async (
+        prd_name = selectedProduct,
+        prd_series = selectedSeries,
+    ) => {
+    try {
+        // setIsLoading(true);
+        const response = await fetch(`http://localhost:3000/api/filter-wip-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        if (!response.ok) {
+            throw new Error('Network response was not OK');
+        }
+        const data = await response.json();
+        // Add a unique id property to each row
+        const rowsWithId = data.map((row, index) => ({
+            ...row,
+            id: index, // You can use a better unique identifier here if available
+        }));
+        setWipDetails(rowsWithId);
+        const sum = data.reduce((total , item) => total + item.qty_wip_detail , 0)
+        setsumQtyWip(sum);
+        } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('An error occurred while fetching data Wip Details');
+        } finally {
+            // setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
+    };
     
     useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
         fetchData_week();
@@ -472,6 +511,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_FGDetails();
         fetchData_FGunDetails();
         fetchData_WipPenDetails();
+        fetchData_WipDetails();
     }, [selectedProduct , selectedSeries]);
 
     useEffect(() => {
@@ -618,6 +658,27 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         { field: 'process', headerName: 'Process', width: 100 },
         { field: 'pending_reason', headerName: 'Reason', width: 200 },
         { field: 'qty_pending', headerName: 'Qty Pending', width: 200 },
+    ];
+
+    ////////////// Modal Wip by Details //////////////////////////////////
+    const openModal_WipDetails = (WipDetValue) => {
+        if (WipDetValue > 0) {
+            setSelectedWipDet(WipDetValue);
+            setIsModalOpen_WipDet(true);
+        }
+    };
+    const closeModal_WipDetails = () => {
+        setSelectedWipDet(null);
+        setIsModalOpen_WipDet(false);
+    };
+    
+    const columns_WipDetails = [
+        { field: 'prd_name', headerName: 'Product Name', width: 200},
+        { field: 'prd_series', headerName: 'Product Series', width: 200 },
+        { field: 'factory', headerName: 'Factory', width: 200 },
+        { field: 'unit', headerName: 'Unit', width: 200 },
+        { field: 'process', headerName: 'Process', width: 200 },
+        { field: 'qty_wip_detail', headerName: 'Qty WIP Detail', width: 200 },
     ];
 
 
@@ -842,17 +903,18 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 {wk_no.map((week, weekIndex) => (
                                     <td
                                         key={weekIndex}
-                                        style={{cursor: poBalData[week] > 0 ? "pointer" : "default" ,
-                                                textDecoration: poBalData[week] > 0 ? 'underline' : 'none',
+                                        style={{cursor: sumQtyBal > 0 ? "pointer" : "default" ,
+                                                textDecoration: sumQtyBal > 0 ? 'underline' : 'none',
                                                 textAlign: 'center',
                                                 backgroundColor: '#E4F1FF' , 
                                                 color: weekIndex === 12 ? '#0E21A0' : 'black',
                                                 fontWeight: weekIndex === 12 ? 'bold' : 'normal',
                                                 fontSize: weekIndex === 12 ? '12px' : 'normal'
                                         }}
-                                        onClick={() => openModal_PoBalDetails(poBalData[week])} // Open modal on click
+                                        onClick={() => openModal_PoBalDetails(sumQtyBal)} // Open modal on click
                                     >
-                                        {poBalData[week] !== undefined ? formatNumberWithCommas(poBalData[week]) : "0"}
+                                        {/* {poBalData[week] !== undefined ? formatNumberWithCommas(poBalData[week]) : "0"} */}
+                                        {weekIndex === 12 ? formatNumberWithCommas(sumQtyBal) : "0"}
                                     </td>
                                 ))}
                             </tr>
@@ -864,17 +926,18 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ cursor: Fg[week] > 0 ? "pointer" : "default" ,
-                                                    textDecoration: Fg[week] > 0 ? 'underline' : 'none',  
+                                            style={{ cursor: sumQtyFg > 0 ? "pointer" : "default" ,
+                                                    textDecoration: sumQtyFg > 0 ? 'underline' : 'none',  
                                                     textAlign: 'center', 
                                                     backgroundColor: '#E4F1FF' , 
                                                     color: weekIndex === 12 ? '#0E21A0' : 'black' , 
                                                     fontWeight: weekIndex === 12 ? 'bold' : 'normal',
                                                     fontSize: weekIndex === 12 ? '12px' : 'normal'
                                                     }}
-                                                    onClick={() => openModal_FGDetails(Fg[week])} // Open modal on click
+                                                    onClick={() => openModal_FGDetails(sumQtyFg)} // Open modal on click
                                         >
-                                            {FgValue !== undefined ? formatNumberWithCommas(FgValue) : "0"}
+                                            {weekIndex === 12 ? formatNumberWithCommas(sumQtyFg): '0'}
+                                            {/* {FgValue !== undefined ? formatNumberWithCommas(FgValue) : "0"} */}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
                                         </td>
                                     );
@@ -912,12 +975,18 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ textAlign: 'center', 
-                                            backgroundColor: '#E4F1FF' , 
-                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
-                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal' }}
+                                            style={{ cursor: sumQtyWip > 0 ? "pointer" : "default" ,
+                                                    textDecoration: sumQtyWip > 0 ? 'underline' : 'none', 
+                                                    textAlign: 'center', 
+                                                    backgroundColor: '#E4F1FF' , 
+                                                    color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                                    fontWeight: weekIndex === 12 ? 'bold' : 'normal',
+                                                    fontSize: weekIndex === 12 ? '12px' : 'normal' 
+                                                }}
+                                                onClick={() => openModal_WipDetails(sumQtyWip)} // Open modal on click
                                         >
-                                            {WipValue !== undefined ? formatNumberWithCommas(WipValue) : "0"}
+                                            {weekIndex === 12 ? formatNumberWithCommas(sumQtyWip) : "0"}
+                                            {/* {WipValue !== undefined ? formatNumberWithCommas(WipValue) : "0"} */}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
                                         </td>
                                     );
@@ -1055,6 +1124,45 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     qty_hold: formatNumberWithCommas(row.qty_hold), // Format the qty_pending field
                                 }))}
                                 columns={columns_FGunDetails}
+                                // loading={!FGDetails.length} 
+                                pageSize={10}
+                                checkboxSelection
+                                // autoPageSize
+                                style={{ minHeight: '400px', border: '1px solid black' , backgroundColor: '#E4F1FF'}}
+                                slots={{ toolbar: CustomToolbar }} 
+                            />
+                        </div>
+                    </Box>
+                </Modal>
+                )}
+
+                {isModalOpen_WipDet && (
+                    <Modal
+                    open={isModalOpen_WipDet}
+                    onClose={closeModal_WipDetails}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                    >
+                    <Box sx={{ ...style_Modal, width: 1330 , height: 800 , backgroundColor: '#AED2FF'}}>
+                        {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
+                            <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
+                                <label htmlFor="" >WIP by Details</label>
+                            </div>
+                            <div>
+                                <IconButton onClick={closeModal_WipDetails}>
+                                    <CloseIcon />
+                                </IconButton>
+                            </div>
+                        </div>
+                        <div style={{ height: 680, width: '100%' }}>
+                            <DataGrid
+                                // rows={WipDetails}
+                                rows={WipDetails.map((row) => ({
+                                    ...row,
+                                    qty_wip_detail: formatNumberWithCommas(row.qty_wip_detail), // Format the qty_pending field
+                                }))}
+                                columns={columns_WipDetails}
                                 // loading={!FGDetails.length} 
                                 pageSize={10}
                                 checkboxSelection
