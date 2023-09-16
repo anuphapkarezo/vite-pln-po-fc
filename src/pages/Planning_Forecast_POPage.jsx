@@ -681,7 +681,9 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         { field: 'qty_wip_detail', headerName: 'Qty WIP Detail', width: 200 },
     ];
 
-
+    let result_1 = sumQtyBal;
+    let result_2 , result_3 , result_4 , result_5 = 0;
+    
     return (
         <div className='container'>
             {/* style={{ display: 'flex', flexDirection: 'row' }} */}
@@ -779,20 +781,103 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                         </thead>
                         <tbody>
+                            
                             {Object.values(dataByProduct).map((productData, index) => (
                                 <tr key={productData.pfd_period_no}>
                                 <td style={{ textAlign: 'center', fontWeight: 'bold' }}>{productData.pfd_period_no}</td>
                                 {wk_no.map((week, weekIndex) => {
-                                    const Period4Chars = productData.pfd_period_no.slice(-4);
-                                    const Week4Chars = week.slice(-4);
                                     let backgroundColor = 'white'; // Default background color
                                     let fontColor_wk = ''
+                                    const Period4Chars = productData.pfd_period_no.slice(-4);
+                                    const Week4Chars = week.slice(-4);
 
+                                    // let sumQtyFcInRange = 0;
+                                    // // Calculate the sum of qty_fc for the specified period range
+                                    // wk_no.slice(12, 17).forEach((week, weekIndex) => {
+                                    //     Object.values(dataByProduct).forEach((productData) => {
+                                    //         const qtyFc = productData.qty_fc[week] || 0;
+                                    //         sumQtyFcInRange += qtyFc;
+                                    //     });
+                                    // });
+                                    // // Compare sumQtyBal with sumQtyFcInRange for weekIndex >= 12 and weekIndex <= 16
+                                    // if (weekIndex >= 12 && weekIndex <= 16) {
+                                    //     if (sumQtyBal < sumQtyFcInRange) {
+                                    //     backgroundColor = 'green'; // Set background color to green when they are equal
+                                    //     } else {
+                                    //     backgroundColor = 'red'; // Set background color to red when they are not equal
+                                    //     }
+                                    // }
                                     if (weekIndex === 12) {
                                     backgroundColor = '#CEE6F3'; 
                                     fontColor_wk = '#0E21A0';
                                     } else if (Period4Chars === Week4Chars) {
                                         backgroundColor = '#B9B4C7'; // Set background color to your desired color if weekIndex is 12
+                                    }
+
+                                    const totalRows = Object.values(dataByProduct).length;
+                                    // let previousResult = 0;
+                                    let qtyFc = productData.qty_fc[week] !== undefined ? productData.qty_fc[week] : 0;
+                                    // let result = productData.qty_fc[week] !== undefined ? sumQtyBal - productData.qty_fc[week] : 0;
+                                    if (index === totalRows - 1) {
+                                        // Apply conditions only to the last row
+                                        if (weekIndex === 12) {
+                                            result_1 = result_1 - qtyFc
+                                            if (result_1 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_1 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+                                        if (weekIndex === 13) {
+                                            result_2 = result_1 - qtyFc
+                                            if (result_2 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_2 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+
+                                        if (weekIndex === 14) {
+                                            result_3 = result_2 - qtyFc
+                                            if (result_3 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_3 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+
+                                        if (weekIndex === 15) {
+                                            result_4 = result_3 - qtyFc
+                                            if (result_4 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_4 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+
+                                        if (weekIndex === 16) {
+                                            result_5 = result_4 - qtyFc
+                                            if (result_5 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_5 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+
+                                        // if (weekIndex >= 12 && weekIndex <= 16) {
+                                        //     if (weekIndex === 12) {
+                                        //         backgroundColor = '#CEE6F3';
+                                        //         fontColor_wk = '#0E21A0';
+                                        //     } else if (Period4Chars === Week4Chars) {
+                                        //         backgroundColor = '#B9B4C7';
+                                        //     }
+                        
+                                        //     if (result >= 0) {
+                                        //         backgroundColor = '#9EB384';
+                                        //     } else if (result < 0) {
+                                        //         backgroundColor = 'red';
+                                        //     }
+                                        // }
                                     }
 
                                     return (
