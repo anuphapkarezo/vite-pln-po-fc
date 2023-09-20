@@ -147,7 +147,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const fetchData_week = async (
         ) => {
           try {
-            const response = await fetch(`http://localhost:3000/api/get-week`);
+            const response = await fetch(`http://10.17.66.112:3000/api/get-week`);
             if (!response.ok) {
               throw new Error('Network response was not OK');
           }
@@ -169,7 +169,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         setIsLoading(true);
-        const response = await fetch(`http://localhost:3000/api/filter-fc-by-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-fc-by-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -190,7 +190,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3000/api/filter-po-all-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-po-all-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -236,7 +236,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3000/api/filter-po-bal-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-po-bal-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -262,7 +262,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3000/api/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -286,7 +286,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3000/api/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -305,7 +305,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries,
     ) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/filter-fc-diff-prev-curr?prd_series=${prd_series}&prd_name=${prd_name}`);
+            const response = await fetch(`http://10.17.66.112:3000/api/filter-fc-diff-prev-curr?prd_series=${prd_series}&prd_name=${prd_name}`);
             if (!response.ok) {
                 throw new Error('Network response was not OK');
             }
@@ -329,7 +329,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries) => {
         try {
         //   setIsLoading(true);
-          const response = await fetch(`http://localhost:3000/api/filter-po-bal-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+          const response = await fetch(`http://10.17.66.112:3000/api/filter-po-bal-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
           if (!response.ok) {
             throw new Error('Network response was not OK');
           }
@@ -350,7 +350,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries) => {
         try {
         //   setIsLoading(true);
-          const response = await fetch(`http://localhost:3000/api/filter-wip-pending-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+          const response = await fetch(`http://10.17.66.112:3000/api/filter-wip-pending-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
           if (!response.ok) {
             throw new Error('Network response was not OK');
           }
@@ -373,7 +373,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries) => {
         try {
         //   setIsLoading(true);
-          const response = await fetch(`http://localhost:3000/api/filter-fg-unmovement-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+          const response = await fetch(`http://10.17.66.112:3000/api/filter-fg-unmovement-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
           if (!response.ok) {
             throw new Error('Network response was not OK');
           }
@@ -398,7 +398,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3000/api/filter-fg-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-fg-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -425,7 +425,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3000/api/filter-fg-unmovement-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-fg-unmovement-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -450,7 +450,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3000/api/filter-wip-pending-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-wip-pending-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -476,7 +476,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://localhost:3000/api/filter-wip-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-wip-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
