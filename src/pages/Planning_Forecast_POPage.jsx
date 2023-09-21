@@ -695,13 +695,13 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     setSelectedSeries(queryParams.prd_series);
                     }}
                 />
-                <div id="pdShowLabel" style={{width: '565px'}}>
+                <div id="pdShowLabel" style={{width: '1000px'}}>
                     {selectedProduct === "Product" ? (
                         <div style={{ backgroundColor: '#E4F1FF', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>{selectedSeries}</div> // Render an empty div if selectedProduct is "Empty"
                     ) : (
-                        chunkArray(fetchedProductData, 8).map((chunk, index) => (
+                        chunkArray(fetchedProductData, 10).map((chunk, index) => (
                         <div key={index} style={{ backgroundColor: '#E4F1FF', fontSize: '14px', fontFamily: 'Angsana News, sans-serif', color: '#952323' }}>
-                            {chunk.join(' : ')}
+                            {chunk.join(' ::: ')}
                         </div>
                         ))
                     )}
