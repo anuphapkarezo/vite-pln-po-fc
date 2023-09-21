@@ -682,7 +682,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ];
 
     let result_1 = sumQtyBal;
-    let result_2 , result_3 , result_4 , result_5 = 0;
+    let result_2 , result_3 , result_4 , result_5 
+    , result_6 , result_7 , result_8 , result_9 , result_10 , result_11 = 0;
     
     return (
         <div className='container'>
@@ -791,22 +792,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     const Period4Chars = productData.pfd_period_no.slice(-4);
                                     const Week4Chars = week.slice(-4);
 
-                                    // let sumQtyFcInRange = 0;
-                                    // // Calculate the sum of qty_fc for the specified period range
-                                    // wk_no.slice(12, 17).forEach((week, weekIndex) => {
-                                    //     Object.values(dataByProduct).forEach((productData) => {
-                                    //         const qtyFc = productData.qty_fc[week] || 0;
-                                    //         sumQtyFcInRange += qtyFc;
-                                    //     });
-                                    // });
-                                    // // Compare sumQtyBal with sumQtyFcInRange for weekIndex >= 12 and weekIndex <= 16
-                                    // if (weekIndex >= 12 && weekIndex <= 16) {
-                                    //     if (sumQtyBal < sumQtyFcInRange) {
-                                    //     backgroundColor = 'green'; // Set background color to green when they are equal
-                                    //     } else {
-                                    //     backgroundColor = 'red'; // Set background color to red when they are not equal
-                                    //     }
-                                    // }
                                     if (weekIndex === 12) {
                                     backgroundColor = '#CEE6F3'; 
                                     fontColor_wk = '#0E21A0';
@@ -864,20 +849,59 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                             }
                                         }
 
-                                        // if (weekIndex >= 12 && weekIndex <= 16) {
-                                        //     if (weekIndex === 12) {
-                                        //         backgroundColor = '#CEE6F3';
-                                        //         fontColor_wk = '#0E21A0';
-                                        //     } else if (Period4Chars === Week4Chars) {
-                                        //         backgroundColor = '#B9B4C7';
-                                        //     }
-                        
-                                        //     if (result >= 0) {
-                                        //         backgroundColor = '#9EB384';
-                                        //     } else if (result < 0) {
-                                        //         backgroundColor = 'red';
-                                        //     }
-                                        // }
+                                        if (weekIndex === 17) {
+                                            result_6 = result_5 - qtyFc
+                                            if (result_6 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_6 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+
+                                        if (weekIndex === 18) {
+                                            result_7 = result_6 - qtyFc
+                                            if (result_7 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_7 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+
+                                        if (weekIndex === 19) {
+                                            result_8 = result_7 - qtyFc
+                                            if (result_8 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_8 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+
+                                        if (weekIndex === 20) {
+                                            result_9 = result_8 - qtyFc
+                                            if (result_9 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_9 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+
+                                        if (weekIndex === 21) {
+                                            result_10 = result_9 - qtyFc
+                                            if (result_10 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_10 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
+
+                                        if (weekIndex === 22) {
+                                            result_11 = result_10 - qtyFc
+                                            if (result_11 >= 0) {
+                                                backgroundColor = '#9EB384';
+                                            } else if (result_11 < 0) {
+                                                backgroundColor = 'red';
+                                            }
+                                        }
                                     }
 
                                     return (
