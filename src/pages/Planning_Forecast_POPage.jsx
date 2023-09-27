@@ -678,7 +678,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         { field: 'factory', headerName: 'Factory', width: 200 },
         { field: 'unit', headerName: 'Unit', width: 200 },
         { field: 'process', headerName: 'Process', width: 200 },
-        { field: 'qty_wip_detail', headerName: 'Qty WIP Detail', width: 200 },
+        { field: 'qty_wip_detail', headerName: 'Net Qty WIP Detail', width: 200 },
     ];
 
     let result_1 = sumQtyBal;
@@ -1012,15 +1012,20 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 {wk_no.map((week, weekIndex) => (
                                     <td
                                         key={weekIndex}
-                                        style={{cursor: sumQtyBal > 0 ? "pointer" : "default" ,
-                                                textDecoration: sumQtyBal > 0 ? 'underline' : 'none',
+                                        style={{cursor: weekIndex === 12 && sumQtyBal > 0 ? "pointer" : "default" ,
+                                                textDecoration: weekIndex === 12 && sumQtyBal > 0 ? 'underline' : 'none',
                                                 textAlign: 'center',
                                                 backgroundColor: '#E4F1FF' , 
                                                 color: weekIndex === 12 ? '#0E21A0' : 'black',
                                                 fontWeight: weekIndex === 12 ? 'bold' : 'normal',
                                                 fontSize: weekIndex === 12 ? '12px' : 'normal'
                                         }}
-                                        onClick={() => openModal_PoBalDetails(sumQtyBal)} // Open modal on click
+                                        // onClick={() => openModal_PoBalDetails(sumQtyBal)} 
+                                        onClick={() => {
+                                            if (weekIndex === 12 && sumQtyBal > 0) {
+                                              openModal_PoBalDetails(sumQtyBal);
+                                            }
+                                        }}// Open modal on click
                                     >
                                         {/* {poBalData[week] !== undefined ? formatNumberWithCommas(poBalData[week]) : "0"} */}
                                         {weekIndex === 12 ? formatNumberWithCommas(sumQtyBal) : "0"}
@@ -1035,15 +1040,20 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ cursor: sumQtyFg > 0 ? "pointer" : "default" ,
-                                                    textDecoration: sumQtyFg > 0 ? 'underline' : 'none',  
+                                            style={{ cursor: weekIndex === 12 && sumQtyFg > 0 ? "pointer" : "default" ,
+                                                    textDecoration: weekIndex === 12 && sumQtyFg > 0 ? 'underline' : 'none',  
                                                     textAlign: 'center', 
                                                     backgroundColor: '#E4F1FF' , 
                                                     color: weekIndex === 12 ? '#0E21A0' : 'black' , 
                                                     fontWeight: weekIndex === 12 ? 'bold' : 'normal',
                                                     fontSize: weekIndex === 12 ? '12px' : 'normal'
                                                     }}
-                                                    onClick={() => openModal_FGDetails(sumQtyFg)} // Open modal on click
+                                                    // onClick={() => openModal_FGDetails(sumQtyFg)} 
+                                                    onClick={() => {
+                                                        if (weekIndex === 12 && sumQtyFg > 0) {
+                                                            openModal_FGDetails(sumQtyFg);
+                                                        }
+                                                    }}// Open modal on click
                                         >
                                             {weekIndex === 12 ? formatNumberWithCommas(sumQtyFg): '0'}
                                             {/* {FgValue !== undefined ? formatNumberWithCommas(FgValue) : "0"} */}
@@ -1060,15 +1070,20 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ cursor: FgUnmovement[week] > 0 ? "pointer" : "default" ,
-                                                    textDecoration: FgUnmovement[week] > 0 ? 'underline' : 'none',  
+                                            style={{ cursor: weekIndex === 12 && FgUnmovement[week] > 0 ? "pointer" : "default" ,
+                                                    textDecoration: weekIndex === 12 && FgUnmovement[week] > 0 ? 'underline' : 'none',  
                                                     textAlign: 'center', 
                                                     backgroundColor: '#E4F1FF' , 
                                                     color: weekIndex === 12 ? '#0E21A0' : 'black' , 
                                                     fontWeight: weekIndex === 12 ? 'bold' : 'normal',
                                                     fontSize: weekIndex === 12 ? '12px' : 'normal' 
                                                     }}
-                                                    onClick={() => openModal_FGunDetails(FgUnmovement[week])} // Open modal on click
+                                                    // onClick={() => openModal_FGunDetails(FgUnmovement[week])} 
+                                                    onClick={() => {
+                                                        if (weekIndex === 12 && (FgUnmovement[week]) > 0) {
+                                                            openModal_FGunDetails(FgUnmovement[week]);
+                                                        }
+                                                    }}// Open modal on click
                                         >
                                             {FgUnmovementValue !== undefined ? formatNumberWithCommas(FgUnmovementValue) : "0"}
                                             {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
@@ -1084,19 +1099,22 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     return (
                                         <td
                                             key={weekIndex}
-                                            style={{ cursor: sumQtyWip > 0 ? "pointer" : "default" ,
-                                                    textDecoration: sumQtyWip > 0 ? 'underline' : 'none', 
+                                            style={{ cursor: weekIndex === 12 && sumQtyWip > 0 ? "pointer" : "default" ,
+                                                    textDecoration: weekIndex === 12 && sumQtyWip > 0 ? 'underline' : 'none', 
                                                     textAlign: 'center', 
                                                     backgroundColor: '#E4F1FF' , 
                                                     color: weekIndex === 12 ? '#0E21A0' : 'black' , 
                                                     fontWeight: weekIndex === 12 ? 'bold' : 'normal',
                                                     fontSize: weekIndex === 12 ? '12px' : 'normal' 
                                                 }}
-                                                onClick={() => openModal_WipDetails(sumQtyWip)} // Open modal on click
+                                                // onClick={() => openModal_WipDetails(sumQtyWip)} 
+                                                onClick={() => {
+                                                    if (weekIndex === 12 && sumQtyWip > 0) {
+                                                        openModal_WipDetails(sumQtyWip);
+                                                    }
+                                                }}// Open modal on click
                                         >
                                             {weekIndex === 12 ? formatNumberWithCommas(sumQtyWip) : "0"}
-                                            {/* {WipValue !== undefined ? formatNumberWithCommas(WipValue) : "0"} */}
-                                            {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
                                         </td>
                                     );
                                 })}
@@ -1108,15 +1126,20 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                     return (
                                         <th
                                             key={weekIndex}
-                                            style={{ cursor: wipPending && wipPending.length > 0 ? "pointer" : "default" ,
-                                                    textDecoration: wipPending && wipPending.length > 0 ? 'underline' : 'none',
+                                            style={{ cursor: weekIndex === 12 && wipPending && wipPending.length > 0 ? "pointer" : "default" ,
+                                                    textDecoration: weekIndex === 12 && wipPending && wipPending.length > 0 ? 'underline' : 'none',
                                                     textAlign: 'center', 
                                                     backgroundColor: '#E4F1FF' , 
                                                     color: weekIndex === 12 ? '#0E21A0' : 'black' , 
                                                     fontWeight: weekIndex === 12 ? 'bold' : 'normal' ,
                                                     fontSize: weekIndex === 12 ? '12px' : 'normal'  
                                                 }}
-                                                onClick={() => openModal_WipPenDetails(wipPending.length)} // Open modal on click
+                                                // onClick={() => openModal_WipPenDetails(wipPending.length)} 
+                                                onClick={() => {
+                                                    if (weekIndex === 12 && (wipPending.length) > 0) {
+                                                        openModal_WipPenDetails(wipPending.length);
+                                                    }
+                                                }}// Open modal on click
                                         >
                                             {wipPending && wipPending.length > 0 && weekIndex === 12 ? formatNumberWithCommas(wipPending[0].qty_pending) : "0"}
                                         </th>
