@@ -121,6 +121,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [fcFlatData, setFcFlatData] = useState([]);
     const [wipPending, setWipPending] = useState([]);
     const [FgUnmovement, setFgUnmovement] = useState([]);
+    const [fcAccuracy, setfcAccuracy] = useState([]);
     // const [FgUnmovementDet, setFgUnmovementDet] = useState([]);
 
     // For Modal //
@@ -496,6 +497,32 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             // setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
     };
+
+    const fetchData_fc_accuracy = async (
+        prd_name = selectedProduct,
+        prd_series = selectedSeries,
+    ) => {
+    try {
+        // setIsLoading(true);
+        const response = await fetch(`http://10.17.66.112:3000/api/filter-fc-accuracy-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        if (!response.ok) {
+            throw new Error('Network response was not OK');
+        }
+        const data = await response.json();
+        console.log(data);
+        const fcAccuracyData = {};
+        data.forEach(item => {
+            fcAccuracyData[item.wk] = item.fc_accuracy;
+        });
+        console.log(fcAccuracyData);
+        setfcAccuracy(fcAccuracyData);
+        } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('An error occurred while fetching data Actual ship Summary');
+        } finally {
+            // setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
+    };
     
     useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
         fetchData_week();
@@ -512,6 +539,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_FGunDetails();
         fetchData_WipPenDetails();
         fetchData_WipDetails();
+        fetchData_fc_accuracy();
     }, [selectedProduct , selectedSeries]);
 
     useEffect(() => {
@@ -921,12 +949,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 </tr>
                             ))}
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#AED2FF' , height: '30px'}}>FC_Lastest :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' , height: '30px'}}>FC_Lastest :</td>
                                 {wk_no.map((week, weekIndex) => (
                                     <td 
                                         key={weekIndex} 
                                         style={{ textAlign: 'center' , 
-                                        backgroundColor: '#AED2FF' , 
+                                        backgroundColor: '#E4F1FF' , 
                                         color: weekIndex === 12 ? '#0E21A0' : 'black' , 
                                         fontWeight: weekIndex === 12 ? 'bold' : 'normal'}}>
                                         {formatNumberWithCommas(fcLatestData[week])}
@@ -934,7 +962,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 ))}
                             </tr>
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>FC_Fluctuation :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#AED2FF' ,height: '30px'}}>FC_Fluctuation :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     const FlatValue = fcFlatData[week];
                                     const isNegative = FlatValue && FlatValue.charAt(0) === '-';
@@ -942,11 +970,32 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                         <td
                                             key={weekIndex}
                                             style={{ textAlign: 'center', 
-                                            backgroundColor: '#E4F1FF' , 
+                                            backgroundColor: '#AED2FF' , 
                                             color: isNegative ? 'red' : weekIndex === 12 ? '#0E21A0' : 'black' , 
                                             fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
                                         >
                                             {FlatValue !== undefined ? formatNumberWithCommas(FlatValue) : "0"}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+
+                            <tr>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>FC_Accuracy(%) :</td>
+                                {wk_no.map((week, weekIndex) => {
+                                    const fcAccuracyValue = fcAccuracy[week];
+                                    // const fcAccuracyValues = fcAccuracyValue !== undefined ? parseInt(fcAccuracyValue) : 0;
+                                    return (
+                                        <td
+                                            key={weekIndex}
+                                            style={{ textAlign: 'center', 
+                                            backgroundColor: '#E4F1FF' , 
+                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
+                                        >
+                                            {/* {fcAccuracyValues !== undefined ? formatNumberWithCommas(fcAccuracyValues) : "0 %"} */}
+                                            {fcAccuracyValue !== undefined ? `${formatNumberWithCommas(fcAccuracyValue)} %` : "0 %"}
+                                            {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
                                         </td>
                                     );
                                 })}
@@ -994,17 +1043,17 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 {/* <td></td> */}
                                 <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#AED2FF' ,height: '30px'}}>Actual ship :</td>
                                 {wk_no.map((week, weekIndex) => (
-                                <td
-                                    key={weekIndex}
-                                    style={{textAlign: 'center', 
-                                    backgroundColor: '#AED2FF', 
-                                    color: weekIndex === 12 ? '#0E21A0' : 'black', 
-                                    fontWeight: weekIndex === 12 ? 'bold' : 'normal'
-                                    }}
-                                >
-                                    {actualShips[week] !== undefined ? formatNumberWithCommas(actualShips[week]) : "0"}
-                                </td>
-                            ))}
+                                    <td
+                                        key={weekIndex}
+                                        style={{textAlign: 'center', 
+                                        backgroundColor: '#AED2FF', 
+                                        color: weekIndex === 12 ? '#0E21A0' : 'black', 
+                                        fontWeight: weekIndex === 12 ? 'bold' : 'normal'
+                                        }}
+                                    >
+                                        {actualShips[week] !== undefined ? formatNumberWithCommas(actualShips[week]) : "0"}
+                                    </td>
+                                ))}
                             </tr>
                             <tr>
                                 {/* <td></td> */}
@@ -1121,7 +1170,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             </tr>
                             <tr>
                                 {/* <td></td> */}
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>WIP Pending :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' ,height: '30px'}}>WIP Pending (1.1,3.1) :</td>
                                 {wk_no.map((week, weekIndex) => {
                                     return (
                                         <th
