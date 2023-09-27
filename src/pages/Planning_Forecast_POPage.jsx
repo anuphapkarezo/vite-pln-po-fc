@@ -836,98 +836,98 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                         if (weekIndex === 12) {
                                             result_1 = result_1 - qtyFc
                                             if (result_1 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_1 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
                                         if (weekIndex === 13) {
                                             result_2 = result_1 - qtyFc
                                             if (result_2 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_2 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
 
                                         if (weekIndex === 14) {
                                             result_3 = result_2 - qtyFc
                                             if (result_3 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_3 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
 
                                         if (weekIndex === 15) {
                                             result_4 = result_3 - qtyFc
                                             if (result_4 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_4 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
 
                                         if (weekIndex === 16) {
                                             result_5 = result_4 - qtyFc
                                             if (result_5 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_5 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
 
                                         if (weekIndex === 17) {
                                             result_6 = result_5 - qtyFc
                                             if (result_6 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_6 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
 
                                         if (weekIndex === 18) {
                                             result_7 = result_6 - qtyFc
                                             if (result_7 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_7 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
 
                                         if (weekIndex === 19) {
                                             result_8 = result_7 - qtyFc
                                             if (result_8 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_8 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
 
                                         if (weekIndex === 20) {
                                             result_9 = result_8 - qtyFc
                                             if (result_9 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_9 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
 
                                         if (weekIndex === 21) {
                                             result_10 = result_9 - qtyFc
                                             if (result_10 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_10 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
 
                                         if (weekIndex === 22) {
                                             result_11 = result_10 - qtyFc
                                             if (result_11 >= 0) {
-                                                backgroundColor = '#9EB384';
+                                                backgroundColor = '#A6FF96';
                                             } else if (result_11 < 0) {
-                                                backgroundColor = 'red';
+                                                backgroundColor = '#EF9595';
                                             }
                                         }
                                     }
