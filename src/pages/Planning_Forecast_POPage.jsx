@@ -707,6 +707,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         { field: 'unit', headerName: 'Unit', width: 200 },
         { field: 'process', headerName: 'Process', width: 200 },
         { field: 'qty_wip_detail', headerName: 'Net Qty WIP Detail', width: 200 },
+        { field: 'ro_rev', headerName: 'Revision', width: 150 },
     ];
 
     let result_1 = sumQtyBal;
@@ -1324,7 +1325,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                     >
-                    <Box sx={{ ...style_Modal, width: 1330 , height: 800 , backgroundColor: '#AED2FF'}}>
+                    <Box sx={{ ...style_Modal, width: 1500 , height: 800 , backgroundColor: '#AED2FF'}}>
                         {/* <h3 style={{textAlign: 'center'}}>PO Balance by Details</h3> */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
                             <div style={{textAlign: 'center' , fontWeight: 'bold' , fontSize: '20px' , marginBottom: '10px'}}>
