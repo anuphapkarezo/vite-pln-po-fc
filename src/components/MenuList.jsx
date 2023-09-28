@@ -65,7 +65,7 @@ const MenuList = ({ open }) => {
                 <ListItemText primary="Forecast Vs PO" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
         </ListItem>
-        <ListItem disablePadding sx={{ display: 'block' ,color: 'black'}} component={Link} to="/pln_fc_accuracy">
+        <ListItem disablePadding sx={{ display: 'block' ,color: 'black'}} component={Link} to="/pln_fc_analysis">
                 <ListItemButton
                 sx={{
                     minHeight: 48,
@@ -87,7 +87,7 @@ const MenuList = ({ open }) => {
                     >
                     <StackedLineChartOutlinedIcon />
                 </ListItemIcon>
-                <ListItemText primary="Forecast Accuracy" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary="Forecast Analysis" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
         </ListItem>
     </List>

@@ -950,7 +950,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                                 </tr>
                             ))}
                             <tr>
-                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' , height: '30px'}}>FC_Lastest :</td>
+                                <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' , height: '30px'}}>FC_Latest :</td>
                                 {wk_no.map((week, weekIndex) => (
                                     <td 
                                         key={weekIndex} 
