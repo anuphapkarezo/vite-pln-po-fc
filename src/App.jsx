@@ -17,6 +17,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Fuji from "/Fuji.png"; // นำเข้าคอมโพเนนต์ Page1 จากไฟล์ "Page1.js" ในโฟลเดอร์เดียวกัน
 import MenuList from "./components/MenuList";
 import Planning_Forecast_POPage from "./pages/Planning_Forecast_POPage";
+import Planning_Forecast_AccuracyPage from "./pages/Planning_Forecast_AccuracyPage";
 // import AnalyticEcommerce from "./components/cards/statistics/AnalyticEcommerce";DataChartPage
 
 const drawerWidth = 240; // กำหนดค่าความกว้างของ Drawer เป็น 240
@@ -193,6 +194,7 @@ export default function MiniDrawer() {
           <Routes>
           {/* <Route exact path="/" element={<Home />} /> */}
           <Route path="/pln_fc_po" element={<Planning_Forecast_POPage />}/>
+          <Route path="/pln_fc_accuracy" element={<Planning_Forecast_AccuracyPage />}/>
         </Routes>
         </Box>
       </Box>

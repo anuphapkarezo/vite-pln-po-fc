@@ -6,18 +6,16 @@ import Button from '@mui/material/Button';
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-function SearchFacSeriesProd_Fc({ onSearch }) {
+function SearchProd_Fc({ onSearch }) {
     const [error , setError] = useState(null);
 
     //Set Dropdown List
     const [selectedProduct, setSelectedProduct] = useState(null);
-    const [selectedSeries, setSelectedSeries] = useState(null);
+    // const [selectedSeries, setSelectedSeries] = useState(null);
 
     //Set Parameter from API
     const [distinctProduct, setDistinctProduct] = useState([]);
-    const [distinctSeries, setDistinctSeries] = useState([]);
-
-    // http://10.17.66.112:3000/api/smart_planning/smart_planning/productlist
+    // const [distinctSeries, setDistinctSeries] = useState([]);
 
     const fetchProduct = async () => {
         try {
@@ -29,31 +27,31 @@ function SearchFacSeriesProd_Fc({ onSearch }) {
         }
     };
 
-    const fetchSeries = async () => {
-        try {
-          const response = await axios.get("http://10.17.66.112:3000/api/smart_planning/serieslist");
-          const dataSeries = response.data;
-          setDistinctSeries(dataSeries);
-        } catch (error) {
-          console.error(`Error fetching distinct data SeriesList: ${error}`);
-        }
-    };
+    // const fetchSeries = async () => {
+    //     try {
+    //       const response = await axios.get("http://10.17.66.112:3000/api/serieslist");
+    //       const dataSeries = response.data;
+    //       setDistinctSeries(dataSeries);
+    //     } catch (error) {
+    //       console.error(`Error fetching distinct data SeriesList: ${error}`);
+    //     }
+    // };
 
     if (error) {
         return <div>Error: {error}</div>;
     }
 
     //สร้าง Function selection change
-    const handleSeriesChange = (event, newValue) => {
-        console.log(newValue);
-        setSelectedSeries(newValue);
-        setSelectedProduct({ prd_name: "Product" });
-    }
+    // const handleSeriesChange = (event, newValue) => {
+    //     console.log(newValue);
+    //     setSelectedSeries(newValue);
+    //     setSelectedProduct({ prd_name: "Product" });
+    // }
 
     const handleProductChange = (event, newValue) => {
         console.log(newValue);
         setSelectedProduct(newValue);
-        setSelectedSeries({ prd_series: "Series" });
+        // setSelectedSeries({ prd_series: "Series" });
     }
 
     const handleSearch = () => {
@@ -63,22 +61,21 @@ function SearchFacSeriesProd_Fc({ onSearch }) {
         //   department: selectedDepartment.department,
         //   process: selectedProcess.process,
           prd_name: selectedProduct.prd_name,
-          prd_series: selectedSeries.prd_series,
+        //   prd_series: selectedSeries.prd_series,
         };
         onSearch(queryParams); // Invoke the callback function with the selected values
     };
 
     useEffect(() => {
         fetchProduct();
-        fetchSeries();
-    }, [selectedProduct , selectedSeries ]);
+    }, [selectedProduct]);
 
     return (
         <React.Fragment>
             <div>
                 <h5 style={{ fontSize: 20, fontWeight: 'bold', color: '#6528F7' , 
-                    backgroundColor: '#FAF1E4' , width: '250px' , paddingLeft: '5px' , marginBottom : '20px'}}>
-                    Plannig : Forecast Vs PO</h5>
+                    backgroundColor: '#FAF1E4' , width: '200px' , paddingLeft: '5px' , marginBottom : '20px'}}>
+                    Forecast Accuracy</h5>
             </div>
             <Box maxWidth="xl" sx={{ width: "100%" , height: 50}}>
                 <Grid container spacing={0} style={{width: 1350 }}> 
@@ -94,16 +91,16 @@ function SearchFacSeriesProd_Fc({ onSearch }) {
                             />
                         </div>
                     </Grid> */}
-                    <Grid  item xs={2} md={2} >
+                    {/* <Grid  item xs={2} md={2} >
                         <div style={{ display: 'grid', placeItems: 'center' }}>
-                            {/* <Autocomplete
+                            <Autocomplete
                                 id="cmb_type"
                                 size="small"
                                 sx={{ width: 220 }}
                                 options={SeriesList} // กำหนดรายการตัวเลือก
                                 getOptionLabel={(option) => option.title} // กำหนดฟิลด์ที่จะแสดงในตัวเลือก
                                 renderInput={(params) => <TextField {...params} label="Series" />} // แสดง input field
-                            /> */}
+                            />
                             <Autocomplete
                                 disablePortal
                                 id="combo-box-demo-series"
@@ -119,7 +116,7 @@ function SearchFacSeriesProd_Fc({ onSearch }) {
                                 }
                             />
                         </div>
-                    </Grid>
+                    </Grid> */}
                     <Grid  item xs={2} md={2} >
                         <div style={{ display: 'grid', placeItems: 'center' }}>
                             <Autocomplete
@@ -166,4 +163,4 @@ function SearchFacSeriesProd_Fc({ onSearch }) {
     );
 }
 
-export default SearchFacSeriesProd_Fc
+export default SearchProd_Fc
