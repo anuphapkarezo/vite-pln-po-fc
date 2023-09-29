@@ -19,7 +19,7 @@ function SearchProd_Fc({ onSearch }) {
 
     const fetchProduct = async () => {
         try {
-          const response = await axios.get("http://localhost:3000/api/smart_planning/productlist");
+          const response = await axios.get("http://10.17.66.112:3000/api/smart_planning/productlist");
           const dataProduct = response.data;
           setDistinctProduct(dataProduct);
         } catch (error) {
@@ -29,7 +29,7 @@ function SearchProd_Fc({ onSearch }) {
 
     // const fetchSeries = async () => {
     //     try {
-    //       const response = await axios.get("http://localhost:3000/api/serieslist");
+    //       const response = await axios.get("http://10.17.66.112:3000/api/serieslist");
     //       const dataSeries = response.data;
     //       setDistinctSeries(dataSeries);
     //     } catch (error) {
