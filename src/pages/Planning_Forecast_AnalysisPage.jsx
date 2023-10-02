@@ -7,6 +7,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import './Planning_Forecast_AnalysisPage.css'; // Import the CSS file
 import CircularProgress from '@mui/material/CircularProgress';
+import { Axios } from "axios";
 
 const columns = [
   { field: 'sales', headerName: 'Sales', width: 150 , headerAlign: 'center' , headerClassName: 'bold-header'},
@@ -50,7 +51,7 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
   const fetchFcAnalysis = async () => {
   try {
       setIsLoading(true);
-      const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-fc-analysis`);
+      const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-analysis`);
       if (!response.ok) {
           throw new Error('Network response was not OK');
       }
@@ -64,8 +65,6 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
       } catch (error) {
       console.error('Error fetching data:', error);
       setError('An error occurred while fetching data Wip Details');
-      } finally {
-          setIsLoading(false); // Set isLoading back to false when fetch is complete
       }
   };
 

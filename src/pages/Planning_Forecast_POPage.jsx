@@ -17,7 +17,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'; // Import CloseIcon
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-
+import { Axios } from "axios";
 
 export default function Planning_Forecast_POPage({ onSearch }) {
     const getJson = (apiRef) => {
@@ -148,7 +148,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const fetchData_week = async (
         ) => {
           try {
-            const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/get-week`);
+            const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/get-week`);
             if (!response.ok) {
               throw new Error('Network response was not OK');
           }
@@ -170,7 +170,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-fc-by-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-by-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -180,9 +180,10 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Forecast');
-        } finally {
-            setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
+        // finally {
+        //     setIsLoading(false); // Set isLoading back to false when fetch is complete
+        // }
     };
 
     const fetchData_po = async (
@@ -191,7 +192,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-po-all-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-po-all-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -226,9 +227,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Po_All');
-        } finally {
-            // setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
 
     const fetchData_pobal = async (
@@ -237,7 +236,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-po-bal-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-po-bal-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -251,9 +250,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Po_Bal');
-        } finally {
-            // setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
     
 
@@ -263,7 +260,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -276,9 +273,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Actual ship Summary');
-        } finally {
-            // setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
 
     const fetchData_PDshow = async (
@@ -287,7 +282,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -296,9 +291,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data product show');
-        } finally {
-            // setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
 
     const fetchData_FcFlat = async (
@@ -306,7 +299,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries,
     ) => {
         try {
-            const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-fc-diff-prev-curr?prd_series=${prd_series}&prd_name=${prd_name}`);
+            const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-diff-prev-curr?prd_series=${prd_series}&prd_name=${prd_name}`);
             if (!response.ok) {
                 throw new Error('Network response was not OK');
             }
@@ -319,9 +312,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('An error occurred while fetching data FC_FLAT');
-        } finally {
-            // setIsLoading(false);
-        }
+        } 
     };
 
     const [sumQtyBal, setSumQtyBal] = useState(0);
@@ -330,7 +321,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries) => {
         try {
         //   setIsLoading(true);
-          const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-po-bal-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+          const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-po-bal-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
           if (!response.ok) {
             throw new Error('Network response was not OK');
           }
@@ -341,9 +332,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
           console.error('Error fetching data:', error);
           setError('An error occurred while fetching data Po Bal Details');
-        } finally {
-        //   setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
 
     const fetchData_WipPending = async (
@@ -351,7 +340,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries) => {
         try {
         //   setIsLoading(true);
-          const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-wip-pending-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+          const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-wip-pending-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
           if (!response.ok) {
             throw new Error('Network response was not OK');
           }
@@ -364,9 +353,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
           console.error('Error fetching data:', error);
           setError('An error occurred while fetching data Wip Pending');
-        } finally {
-        //   setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
 
     const fetchData_Fgunmovement = async (
@@ -374,7 +361,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries) => {
         try {
         //   setIsLoading(true);
-          const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-fg-unmovement-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+          const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fg-unmovement-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
           if (!response.ok) {
             throw new Error('Network response was not OK');
           }
@@ -387,8 +374,6 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
           console.error('Error fetching data:', error);
           setError('An error occurred while fetching data FG Unmovement');
-        } finally {
-        //   setIsLoading(false); // Set isLoading back to false when fetch is complete
         }
     };
 
@@ -399,7 +384,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-fg-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fg-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -415,9 +400,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data FG Details');
-        } finally {
-            // setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
 
     const fetchData_FGunDetails = async (
@@ -426,7 +409,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-fg-unmovement-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fg-unmovement-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -440,9 +423,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data FG Unmovement Details');
-        } finally {
-            // setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
 
     const fetchData_WipPenDetails = async (
@@ -451,7 +432,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-wip-pending-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-wip-pending-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -465,9 +446,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Wip Pending Details');
-        } finally {
-            // setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
 
     const [sumQtyWip , setsumQtyWip] = useState(0);
@@ -477,7 +456,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-wip-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-wip-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -493,9 +472,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Wip Details');
-        } finally {
-            // setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
 
     const fetchData_fc_accuracy = async (
@@ -504,7 +481,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-fc-accuracy-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-accuracy-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
         if (!response.ok) {
             throw new Error('Network response was not OK');
         }
@@ -519,9 +496,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Actual ship Summary');
-        } finally {
-            // setIsLoading(false); // Set isLoading back to false when fetch is complete
-        }
+        } 
     };
     
     useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
