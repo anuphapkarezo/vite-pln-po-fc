@@ -50,7 +50,7 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
   const fetchFcAnalysis = async () => {
   try {
       setIsLoading(true);
-      const response = await fetch(`http://10.17.66.112:3000/api/smart_planning/filter-fc-analysis`);
+      const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-fc-analysis`);
       if (!response.ok) {
           throw new Error('Network response was not OK');
       }
