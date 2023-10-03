@@ -114,8 +114,8 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
                   fg: formatNumberWithCommas(row.fg),
                   po_bal: formatNumberWithCommas(row.po_bal),
               }))}
-              disableColumnFilter
-              disableDensitySelector
+              // disableColumnFilter
+              // disableDensitySelector
               slots={{ toolbar: GridToolbar }}
               filterModel={filterModel}
               onFilterModelChange={(newModel) => setFilterModel(newModel)}
