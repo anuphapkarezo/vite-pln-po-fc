@@ -13,7 +13,7 @@ import axios from "axios";
 
 const columns = [
   { field: 'sales', headerName: 'Sales', width: 120 , headerAlign: 'center' , headerClassName: 'bold-header'},
-  { field: 'part', headerName: 'Part', width: 170 , headerAlign: 'center'  , headerClassName: 'bold-header'},
+  { field: 'part', headerName: 'Product Name', width: 170 , headerAlign: 'center'  , headerClassName: 'bold-header'},
   { field: 'ship_factory', headerName: 'Ship Factory', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
   { field: 'planner', headerName: 'Planner', width: 120 , headerAlign: 'center'  , headerClassName: 'bold-header'},
   { field: 'fc', headerName: 'FC', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
