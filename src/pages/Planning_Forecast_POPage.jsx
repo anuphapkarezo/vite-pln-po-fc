@@ -18,6 +18,7 @@ import CloseIcon from '@mui/icons-material/Close'; // Import CloseIcon
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import axios from "axios";
+import { isNull } from "lodash";
 
 export default function Planning_Forecast_POPage({ onSearch }) {
     const getJson = (apiRef) => {
@@ -546,9 +547,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_week();
         fetchData_fc();
         fetchData_po();
-        // fetchData_pobal();
         fetchData_ActualShip();
-        // fetchData_PDshow();
         fetchData_FcFlat();
         fetchData_poBalDetail();
         fetchData_WipPending();
@@ -559,10 +558,15 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_WipDetails();
         fetchData_fc_accuracy();
 
-        if (selectedProduct !== "Product") {
+        console.log("Product" , selectedProduct);
+        if (selectedProduct === null) {
+            console.log("No Fetch");
+        } else {
+            console.log("Fetch");
             fetchData_PDshow();
         }
     }, [selectedProduct , selectedSeries]);
+    // console.log("Product" , selectedProduct);
 
     useEffect(() => {
         const prdNames = pdShow.map((item) => item.prd_name);
