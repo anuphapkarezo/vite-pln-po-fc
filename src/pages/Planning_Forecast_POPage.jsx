@@ -17,7 +17,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'; // Import CloseIcon
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-import { Axios } from "axios";
+import axios from "axios";
 
 export default function Planning_Forecast_POPage({ onSearch }) {
     const getJson = (apiRef) => {
@@ -148,21 +148,27 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const fetchData_week = async (
         ) => {
           try {
-            const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/get-week`);
-            if (!response.ok) {
-              throw new Error('Network response was not OK');
-          }
-            const wk_no = await response.json();
+            const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/get-week`);
+            // const data = await response.data;
+            // const data = await response.json();
+            // if (!response.ok) {
+            //     throw new Error('Network response was not OK');
+            // }
+            const wk_no = await response.data;
             const weekNumbers = wk_no.map(weekObj => weekObj.wk);
             const mon_date = wk_no.map(weekObj => weekObj.mon_date);
+
             setWeekNumbers(weekNumbers);
             setMonDate(mon_date);
           } catch (error) {
             console.error('Error fetching data:', error);
             // setError('An error occurred while fetching data week');
             setError(`An error occurred while fetching data week: ${error.message}`);
+          } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
           }
     };
+
 
     const fetchData_fc = async (
         prd_name = selectedProduct,
@@ -170,20 +176,21 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-by-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-by-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
         setProducts(data);
         setRunningNumber(1); // Reset the running number to 1
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Forecast');
         }
-        // finally {
-        //     setIsLoading(false); // Set isLoading back to false when fetch is complete
-        // }
+        finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+        }
     };
 
     const fetchData_po = async (
@@ -192,11 +199,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-po-all-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-po-all-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
 
         const poRecData = {};
         data.forEach(item => {
@@ -227,31 +235,33 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Po_All');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
-    const fetchData_pobal = async (
-        prd_name = selectedProduct,
-        prd_series = selectedSeries,
-    ) => {
-    try {
-        // setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-po-bal-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
-        const poBalData = {};
-        data.forEach(item => {
-            poBalData[item.wk] = item.qty_bal;
-        });
+    // const fetchData_pobal = async (
+    //     prd_name = selectedProduct,
+    //     prd_series = selectedSeries,
+    // ) => {
+    // try {
+    //     // setIsLoading(true);
+    //     const response = await fetch(`http://10.17.66.242:3001/api/smart_planning/filter-po-bal-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+    //     if (!response.ok) {
+    //         throw new Error('Network response was not OK');
+    //     }
+    //     const data = await response.json();
+    //     const poBalData = {};
+    //     data.forEach(item => {
+    //         poBalData[item.wk] = item.qty_bal;
+    //     });
 
-        setPoBalData(poBalData);
-        } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('An error occurred while fetching data Po_Bal');
-        } 
-    };
+    //     setPoBalData(poBalData);
+    //     } catch (error) {
+    //     console.error('Error fetching data:', error);
+    //     setError('An error occurred while fetching data Po_Bal');
+    //     } 
+    // };
     
 
     const fetchData_ActualShip = async (
@@ -260,11 +270,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-actual-ship-summary-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
         const ActualData = {};
         data.forEach(item => {
             ActualData[item.wk] = item.qty_ship;
@@ -273,7 +284,9 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Actual ship Summary');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const fetchData_PDshow = async (
@@ -282,16 +295,19 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-show-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
         setpdShow(data);
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data product show');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const fetchData_FcFlat = async (
@@ -299,11 +315,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries,
     ) => {
         try {
-            const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-diff-prev-curr?prd_series=${prd_series}&prd_name=${prd_name}`);
-            if (!response.ok) {
-                throw new Error('Network response was not OK');
-            }
-            const data = await response.json();
+            const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-diff-prev-curr?prd_series=${prd_series}&prd_name=${prd_name}`);
+            // if (!response.ok) {
+            //     throw new Error('Network response was not OK');
+            // }
+            // const data = await response.json();
+            const data = await response.data;
             const FlatData = {};
             data.forEach(item => {
                 FlatData[item.wk] = item.qty_fc;
@@ -312,7 +329,9 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('An error occurred while fetching data FC_FLAT');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const [sumQtyBal, setSumQtyBal] = useState(0);
@@ -321,18 +340,21 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries) => {
         try {
         //   setIsLoading(true);
-          const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-po-bal-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-          if (!response.ok) {
-            throw new Error('Network response was not OK');
-          }
-          const data = await response.json();
+          const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-po-bal-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        //   if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        //   }
+        //   const data = await response.json();
+            const data = await response.data;
           setpoBalDetails(data); // Update the state variable name
           const sum = data.reduce((total, item) => total + item.qty_bal, 0);
           setSumQtyBal(sum);
         } catch (error) {
           console.error('Error fetching data:', error);
           setError('An error occurred while fetching data Po Bal Details');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const fetchData_WipPending = async (
@@ -340,11 +362,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries) => {
         try {
         //   setIsLoading(true);
-          const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-wip-pending-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-          if (!response.ok) {
-            throw new Error('Network response was not OK');
-          }
-          const data = await response.json();
+          const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-wip-pending-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        //   if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        //   }
+        //   const data = await response.json();
+        const data = await response.data;
           const wipPendingData = {};
           data.forEach(item => {
             wipPendingData[item.wk] = item.qty_pending;
@@ -353,7 +376,9 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
           console.error('Error fetching data:', error);
           setError('An error occurred while fetching data Wip Pending');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const fetchData_Fgunmovement = async (
@@ -361,11 +386,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         prd_series = selectedSeries) => {
         try {
         //   setIsLoading(true);
-          const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fg-unmovement-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-          if (!response.ok) {
-            throw new Error('Network response was not OK');
-          }
-          const data = await response.json();
+          const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fg-unmovement-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        //   if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        //   }
+        // const data = await response.json();
+        const data = await response.data;
           const fgUnmovementData = {};
           data.forEach(item => {
             fgUnmovementData[item.wk] = item.qty_hold;
@@ -374,7 +400,9 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
           console.error('Error fetching data:', error);
           setError('An error occurred while fetching data FG Unmovement');
-        }
+        }finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const [sumQtyFg , setsumQtyFg] = useState(0);
@@ -384,11 +412,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fg-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fg-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
         // Add a unique id property to each row
         const rowsWithId = data.map((row, index) => ({
             ...row,
@@ -400,7 +429,9 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data FG Details');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const fetchData_FGunDetails = async (
@@ -409,11 +440,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fg-unmovement-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fg-unmovement-details-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
         // Add a unique id property to each row
         const rowsWithId = data.map((row, index) => ({
             ...row,
@@ -423,7 +455,9 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data FG Unmovement Details');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const fetchData_WipPenDetails = async (
@@ -432,11 +466,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-wip-pending-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-wip-pending-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
         // Add a unique id property to each row
         const rowsWithId = data.map((row, index) => ({
             ...row,
@@ -446,7 +481,9 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Wip Pending Details');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const [sumQtyWip , setsumQtyWip] = useState(0);
@@ -456,11 +493,12 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-wip-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-wip-detail-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
         // Add a unique id property to each row
         const rowsWithId = data.map((row, index) => ({
             ...row,
@@ -472,7 +510,9 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         } catch (error) {
         console.error('Error fetching data:', error);
         setError('An error occurred while fetching data Wip Details');
-        } 
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
 
     const fetchData_fc_accuracy = async (
@@ -481,31 +521,34 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     ) => {
     try {
         // setIsLoading(true);
-        const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-accuracy-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        const data = await response.json();
-        console.log(data);
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-accuracy-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
+        // console.log(data);
         const fcAccuracyData = {};
         data.forEach(item => {
             fcAccuracyData[item.wk] = item.fc_accuracy;
         });
-        console.log(fcAccuracyData);
+        // console.log(fcAccuracyData);
         setfcAccuracy(fcAccuracyData);
         } catch (error) {
         console.error('Error fetching data:', error);
-        setError('An error occurred while fetching data Actual ship Summary');
-        } 
+        setError('An error occurred while fetching data accuracy');
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
     };
     
     useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
         fetchData_week();
         fetchData_fc();
         fetchData_po();
-        fetchData_pobal();
+        // fetchData_pobal();
         fetchData_ActualShip();
-        fetchData_PDshow();
+        // fetchData_PDshow();
         fetchData_FcFlat();
         fetchData_poBalDetail();
         fetchData_WipPending();
@@ -515,6 +558,10 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_WipPenDetails();
         fetchData_WipDetails();
         fetchData_fc_accuracy();
+
+        if (selectedProduct !== "Product") {
+            fetchData_PDshow();
+        }
     }, [selectedProduct , selectedSeries]);
 
     useEffect(() => {
@@ -697,6 +744,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                     onSearch={(queryParams) => {
                     setSelectedProduct(queryParams.prd_name);
                     setSelectedSeries(queryParams.prd_series);
+                    // fetchData_PDshow();
                     }}
                 />
                 <div id="pdShowLabel" style={{width: '1000px'}}>

@@ -7,21 +7,23 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import './Planning_Forecast_AnalysisPage.css'; // Import the CSS file
 import CircularProgress from '@mui/material/CircularProgress';
-import { Axios } from "axios";
+// import { Axios } from "axios";
+import axios from "axios";
+
 
 const columns = [
-  { field: 'sales', headerName: 'Sales', width: 150 , headerAlign: 'center' , headerClassName: 'bold-header'},
-  { field: 'part', headerName: 'Part', width: 200 , headerAlign: 'center'  , headerClassName: 'bold-header'},
+  { field: 'sales', headerName: 'Sales', width: 120 , headerAlign: 'center' , headerClassName: 'bold-header'},
+  { field: 'part', headerName: 'Part', width: 170 , headerAlign: 'center'  , headerClassName: 'bold-header'},
   { field: 'ship_factory', headerName: 'Ship Factory', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
   { field: 'planner', headerName: 'Planner', width: 120 , headerAlign: 'center'  , headerClassName: 'bold-header'},
-  { field: 'fc', headerName: 'FC', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'fc', headerName: 'FC', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
   { field: 'po_cover_fc', headerName: 'PO-Cover-FC (WK)', width: 150 , headerAlign: 'center', align: 'center'  , headerClassName: 'bold-header'},
   { field: 'fc_accuracy', headerName: 'FC_Accuracy (4WK)', width: 150 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'wip', headerName: 'WIP', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'fg', headerName: 'FG', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'po_bal', headerName: 'PO_BAL', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'wip_fg_compare_po', headerName: 'WIP+FG compare PO', width: 130 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'wip_fg_compare_fc', headerName: 'WIP+FG compare FC', width: 130 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'wip', headerName: 'WIP', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'fg', headerName: 'FG', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'po_bal', headerName: 'PO_BAL', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'wip_fg_compare_po', headerName: 'WIP+FG compare PO', width: 165 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'wip_fg_compare_fc', headerName: 'WIP+FG compare FC', width: 165 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
 ];
 
 // const rows = [
@@ -47,15 +49,13 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
 
   const [distinctFcAnalysis, setDistinctFcAnalysis] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error , setError] = useState(null);
 
   const fetchFcAnalysis = async () => {
   try {
       setIsLoading(true);
-      const response = await Axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-analysis`);
-      if (!response.ok) {
-          throw new Error('Network response was not OK');
-      }
-      const data = await response.json();
+      const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-analysis`);
+      const data = await response.data;
       // Add a unique id property to each row
       const rowsWithId = data.map((row, index) => ({
           ...row,
@@ -65,6 +65,8 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
       } catch (error) {
       console.error('Error fetching data:', error);
       setError('An error occurred while fetching data Wip Details');
+      } finally {
+        setIsLoading(false); // Set isLoading back to false when fetch is complete
       }
   };
 
@@ -74,7 +76,7 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
 
   const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({});
   return (
-    <div className="table-responsive table-fullscreen" style={{ height: 800, width: '1550px' , marginTop: '5px' }}>
+    <div className="table-responsive table-fullscreen" style={{ height: 800, width: '1480px' , marginTop: '5px' }}>
       {isLoading ? ( // Render the loading indicator if isLoading is true
         <div className="loading-indicator" style={{display: 'flex' , flexDirection: 'column' , justifyContent: 'center' , alignItems: 'center' , height: '50vh'}}>
                 <CircularProgress /> {/* Use the appropriate CircularProgress component */}
