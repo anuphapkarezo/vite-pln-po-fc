@@ -13,17 +13,18 @@ import axios from "axios";
 
 const columns = [
   { field: 'sales', headerName: 'Sales', width: 120 , headerAlign: 'center' , headerClassName: 'bold-header'},
-  { field: 'part', headerName: 'Product Name', width: 170 , headerAlign: 'center'  , headerClassName: 'bold-header'},
+  { field: 'part', headerName: 'Product Name', width: 150 , headerAlign: 'center'  , headerClassName: 'bold-header'},
   { field: 'ship_factory', headerName: 'Ship Factory', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'planner', headerName: 'Planner', width: 120 , headerAlign: 'center'  , headerClassName: 'bold-header'},
+  { field: 'planner', headerName: 'Planner', width: 140 , headerAlign: 'center'  , headerClassName: 'bold-header'},
+  { field: 'cr', headerName: 'CR', width: 140 , headerAlign: 'center'  , headerClassName: 'bold-header'},
   { field: 'fc', headerName: 'FC', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
   { field: 'po_cover_fc', headerName: 'PO-Cover-FC (WK)', width: 150 , headerAlign: 'center', align: 'center'  , headerClassName: 'bold-header'},
-  { field: 'fc_accuracy', headerName: 'FC_Accuracy (4WK)', width: 150 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'wip', headerName: 'WIP', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'fg', headerName: 'FG', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'po_bal', headerName: 'PO_BAL', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'wip_fg_compare_po', headerName: 'WIP+FG compare PO', width: 165 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'wip_fg_compare_fc', headerName: 'WIP+FG compare FC', width: 165 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'fc_accuracy', headerName: 'FC_Accuracy', width: 150 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'wip', headerName: 'WIP', width: 95 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'fg', headerName: 'FG', width: 95 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'po_bal', headerName: 'PO_BAL', width: 95 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'wip_fg_compare_po', headerName: 'WIP+FG compare PO', width: 175 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'wip_fg_compare_fc', headerName: 'WIP+FG compare FC', width: 175 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
 ];
 
 // const rows = [
@@ -76,7 +77,7 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
 
   const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({});
   return (
-    <div className="table-responsive table-fullscreen" style={{ height: 800, width: '1480px' , marginTop: '5px' }}>
+    <div className="table-responsive table-fullscreen" style={{ height: 800, width: '1700px' , marginTop: '5px' }}>
       {isLoading ? ( // Render the loading indicator if isLoading is true
         <div className="loading-indicator" style={{display: 'flex' , flexDirection: 'column' , justifyContent: 'center' , alignItems: 'center' , height: '50vh'}}>
                 <CircularProgress /> {/* Use the appropriate CircularProgress component */}
