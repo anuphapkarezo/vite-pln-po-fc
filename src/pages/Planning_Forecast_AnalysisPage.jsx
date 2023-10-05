@@ -77,7 +77,7 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
 
   const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({});
   return (
-    <div className="table-responsive table-fullscreen" style={{ height: 800, width: '1700px' , marginTop: '5px' }}>
+    <div className="table-responsive table-fullscreen" style={{ height: 800, width: '1750px' , marginTop: '5px' }}>
       {isLoading ? ( // Render the loading indicator if isLoading is true
         <div className="loading-indicator" style={{display: 'flex' , flexDirection: 'column' , justifyContent: 'center' , alignItems: 'center' , height: '50vh'}}>
                 <CircularProgress /> {/* Use the appropriate CircularProgress component */}
@@ -122,6 +122,7 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
               onFilterModelChange={(newModel) => setFilterModel(newModel)}
               slotProps={{ toolbar: { showQuickFilter: true } }}
               columnVisibilityModel={columnVisibilityModel}
+              checkboxSelection
               onColumnVisibilityModelChange={(newModel) =>
                 setColumnVisibilityModel(newModel)
               }
