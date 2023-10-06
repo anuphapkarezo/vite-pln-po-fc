@@ -14,6 +14,7 @@ import ConnectedTvTwoToneIcon from '@mui/icons-material/ConnectedTvTwoTone';
 import LaptopTwoToneIcon from '@mui/icons-material/LaptopTwoTone';
 import GppGoodIcon from '@mui/icons-material/GppGood';
 import GppMaybeIcon from '@mui/icons-material/GppMaybe';
+import GppBadIcon from '@mui/icons-material/GppBad';
 
 const columns = [
   { field: 'sales', headerName: 'Sales', width: 120 , headerAlign: 'center' , headerClassName: 'bold-header'},
@@ -21,38 +22,206 @@ const columns = [
   { field: 'ship_factory', headerName: 'Ship Factory', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
   { field: 'planner', headerName: 'Planner', width: 140 , headerAlign: 'center'  , headerClassName: 'bold-header'},
   { field: 'cr', headerName: 'CR', width: 140 , headerAlign: 'center'  , headerClassName: 'bold-header'},
-  { field: 'fc', headerName: 'FC', width: 80 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'po_cover_fc', headerName: 'PO-Cover-FC (WK)', width: 150 , headerAlign: 'center', align: 'center'  , headerClassName: 'bold-header'},
-  { field: 'fc_accuracy', headerName: 'FC_Accuracy', width: 150 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
+  { field: 'fc', headerName: 'FC', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
+    valueFormatter: (params) => {
+      // Assuming 'fc' is a numerical value, format it with commas for display
+      const formattedValue = new Intl.NumberFormat('en-US').format(params.value);
+      return formattedValue;
+    },
+      sortComparator: (a, b, cellParamsA, cellParamsB) => {
+      // Assuming 'fc' is a numerical value, use a custom sort comparator
+      return cellParamsA.value - cellParamsB.value;
+    },
+  },
+  { field: 'po_cover_fc', headerName: 'PO cover FC (week)', width: 150 , headerAlign: 'center', align: 'center'  , headerClassName: 'bold-header'},
+  { field: 'fc_accuracy', headerName: 'FC Accuracy', width: 150 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
       renderCell: (params) => (
         <div>
           {params.value}&nbsp;%&nbsp;&nbsp;&nbsp;&nbsp;
-          {params.row.fc_accuracy >= 70 ? (
-            <GppGoodIcon style={{ color: 'green' }} /> // Replace with the icon for Desktop
+          {params.row.fc_accuracy >= 80 ? (
+            <GppGoodIcon style={{ color: 'green' }} />
+          ) : params.row.fc_accuracy >= 60 ? (
+            <GppMaybeIcon style={{ color: '#E9B824' }} />
           ) : (
-            <GppMaybeIcon style={{ color: '#E9B824' }} /> // Replace with the icon for Notebook
+            <GppBadIcon style={{ color: 'red' }} />
           )}
         </div>
       ),
   },
-  { field: 'wip', headerName: 'WIP', width: 95 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'wip_pending', headerName: 'WIP Pending (1.1,3.1)', width: 165 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'fg', headerName: 'FG', width: 95 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'fg_unm', headerName: 'FG Unmovement', width: 140 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'po_bal', headerName: 'PO_BAL', width: 95 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'wip_fg_compare_po', headerName: 'WIP+FG compare PO', width: 175 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
-  { field: 'wip_fg_compare_fc', headerName: 'WIP+FG compare FC', width: 175 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
+  { field: 'wip', headerName: 'WIP', width: 95 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header' ,
+        valueFormatter: (params) => {
+          // Attempt to convert the string to a number
+        const numericValue = parseFloat(params.value.replace(/[^0-9.-]+/g,""));
+
+        // Check if the value is a valid number
+        if (!isNaN(numericValue)) {
+          const formattedValue = new Intl.NumberFormat('en-US').format(numericValue);
+          return formattedValue;
+        } else {
+          return 'Invalid Data'; // or any default value or an empty string
+        }
+      },
+      sortComparator: (a, b, cellParamsA, cellParamsB) => {
+        const numA = parseFloat(cellParamsA.value.replace(/[^0-9.-]+/g,""));
+        const numB = parseFloat(cellParamsB.value.replace(/[^0-9.-]+/g,""));
+
+        // Check if both values are valid numbers
+        if (!isNaN(numA) && !isNaN(numB)) {
+          return numA - numB;
+        } else {
+          return 0; // or handle the case when the comparison is not possible
+        }
+    },
+  },
+  { field: 'wip_pending', headerName: 'WIP Pending (1.1,3.1)', width: 165 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
+      valueFormatter: (params) => {
+        // Attempt to convert the string to a number
+      const numericValue = parseFloat(params.value.replace(/[^0-9.-]+/g,""));
+
+      // Check if the value is a valid number
+      if (!isNaN(numericValue)) {
+        const formattedValue = new Intl.NumberFormat('en-US').format(numericValue);
+        return formattedValue;
+      } else {
+        return 'Invalid Data'; // or any default value or an empty string
+      }
+    },
+    sortComparator: (a, b, cellParamsA, cellParamsB) => {
+      const numA = parseFloat(cellParamsA.value.replace(/[^0-9.-]+/g,""));
+      const numB = parseFloat(cellParamsB.value.replace(/[^0-9.-]+/g,""));
+
+      // Check if both values are valid numbers
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return numA - numB;
+      } else {
+        return 0; // or handle the case when the comparison is not possible
+      }
+    },
+  },
+  { field: 'fg', headerName: 'FG', width: 95 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
+      valueFormatter: (params) => {
+        // Attempt to convert the string to a number
+      const numericValue = parseFloat(params.value.replace(/[^0-9.-]+/g,""));
+
+      // Check if the value is a valid number
+      if (!isNaN(numericValue)) {
+        const formattedValue = new Intl.NumberFormat('en-US').format(numericValue);
+        return formattedValue;
+      } else {
+        return 'Invalid Data'; // or any default value or an empty string
+      }
+    },
+    sortComparator: (a, b, cellParamsA, cellParamsB) => {
+      const numA = parseFloat(cellParamsA.value.replace(/[^0-9.-]+/g,""));
+      const numB = parseFloat(cellParamsB.value.replace(/[^0-9.-]+/g,""));
+
+      // Check if both values are valid numbers
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return numA - numB;
+      } else {
+        return 0; // or handle the case when the comparison is not possible
+      }
+    },
+  },
+  { field: 'fg_unm', headerName: 'FG Unmovement', width: 140 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
+      valueFormatter: (params) => {
+        // Attempt to convert the string to a number
+      const numericValue = parseFloat(params.value.replace(/[^0-9.-]+/g,""));
+
+      // Check if the value is a valid number
+      if (!isNaN(numericValue)) {
+        const formattedValue = new Intl.NumberFormat('en-US').format(numericValue);
+        return formattedValue;
+      } else {
+        return 'Invalid Data'; // or any default value or an empty string
+      }
+    },
+    sortComparator: (a, b, cellParamsA, cellParamsB) => {
+      const numA = parseFloat(cellParamsA.value.replace(/[^0-9.-]+/g,""));
+      const numB = parseFloat(cellParamsB.value.replace(/[^0-9.-]+/g,""));
+
+      // Check if both values are valid numbers
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return numA - numB;
+      } else {
+        return 0; // or handle the case when the comparison is not possible
+      }
+    },
+  },
+  { field: 'po_bal', headerName: 'PO balance(pcs)', width: 130 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
+      valueFormatter: (params) => {
+        // Attempt to convert the string to a number
+      const numericValue = parseFloat(params.value.replace(/[^0-9.-]+/g,""));
+
+      // Check if the value is a valid number
+      if (!isNaN(numericValue)) {
+        const formattedValue = new Intl.NumberFormat('en-US').format(numericValue);
+        return formattedValue;
+      } else {
+        return 'Invalid Data'; // or any default value or an empty string
+      }
+    },
+    sortComparator: (a, b, cellParamsA, cellParamsB) => {
+      const numA = parseFloat(cellParamsA.value.replace(/[^0-9.-]+/g,""));
+      const numB = parseFloat(cellParamsB.value.replace(/[^0-9.-]+/g,""));
+
+      // Check if both values are valid numbers
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return numA - numB;
+      } else {
+        return 0; // or handle the case when the comparison is not possible
+      }
+    },
+  },
+  { field: 'wip_fg_compare_po', headerName: 'WIP+FG compare PO', width: 175 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
+        valueFormatter: (params) => {
+          const numericValue = parseFloat(params.value);
+
+        // Check if the value is a valid number
+        if (!isNaN(numericValue)) {
+          const formattedValue = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numericValue);
+          return `${formattedValue} %`;
+        } else {
+          return 'Invalid Data'; // or any default value or an empty string
+        }
+      },
+      sortComparator: (a, b, cellParamsA, cellParamsB) => {
+        const numA = parseFloat(cellParamsA.value);
+        const numB = parseFloat(cellParamsB.value);
+
+        // Check if both values are valid numbers
+        if (!isNaN(numA) && !isNaN(numB)) {
+          return numA - numB;
+        } else {
+          return 0; // Change this to '0.00%' or any default value with percentage sign
+        }
+      },
+  },
+  { field: 'wip_fg_compare_fc', headerName: 'WIP+FG compare FC', width: 175 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
+      valueFormatter: (params) => {
+        const numericValue = parseFloat(params.value);
+
+      // Check if the value is a valid number
+      if (!isNaN(numericValue)) {
+        const formattedValue = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numericValue);
+        return `${formattedValue} %`;
+      } else {
+        return 'Invalid Data'; // or any default value or an empty string
+      }
+    },
+    sortComparator: (a, b, cellParamsA, cellParamsB) => {
+      const numA = parseFloat(cellParamsA.value);
+      const numB = parseFloat(cellParamsB.value);
+
+      // Check if both values are valid numbers
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return numA - numB;
+      } else {
+        return 0; // Change this to '0.00%' or any default value with percentage sign
+      }
+    },
+  },
 ];
-
-// const rows = [
-//   { id:1 , sales: 'FAM', part: 'CACZ-136MW-2DL1' , ship_factory: 'P1' , planner: 'PANASSAYA' , fc: 100 , 
-//     po_cover_fc: 3.5 , fc_accuracy: '80 %' , wip: 30 , fg: 50 , po_bal: 120 ,
-//     wip_fg_compare_po: "100 %" , wip_fg_compare_fc: '50 %' },
-
-//   { id:2 ,sales: 'FAM', part: 'CAC-161S-1C' , ship_factory: 'A1' , planner: 'PANASSAYA' , fc: 200 , 
-//   po_cover_fc: 3.5 , fc_accuracy: '80 %' , wip: 230 , fg: 50 , po_bal: 120 ,
-//   wip_fg_compare_po: "20 %" , wip_fg_compare_fc: '30 %' },
-// ];
 
 export default function Planning_Forecast_AnalysisPage({ onSearch }) {
   const [filterModel, setFilterModel] = React.useState({
@@ -94,7 +263,7 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
 
   const [columnVisibilityModel, setColumnVisibilityModel] = React.useState({});
   return (
-    <div className="table-responsive table-fullscreen" style={{ height: 800, width: '2000px' , marginTop: '5px' }}>
+    <div className="table-responsive table-fullscreen" style={{ height: 800, width: '2055px' , marginTop: '5px' }}>
       {isLoading ? ( // Render the loading indicator if isLoading is true
         <div className="loading-indicator" style={{display: 'flex' , flexDirection: 'column' , justifyContent: 'center' , alignItems: 'center' , height: '50vh'}}>
                 <CircularProgress /> {/* Use the appropriate CircularProgress component */}
@@ -127,7 +296,7 @@ export default function Planning_Forecast_AnalysisPage({ onSearch }) {
               columns={columns}
               rows={distinctFcAnalysis.map((row) => ({
                   ...row,
-                  fc: formatNumberWithCommas(row.fc),
+                  // fc: formatNumberWithCommas(row.fc),
                   // fc_accuracy: formatNumberWithCommas(parseInt(row.fc_accuracy, 10)) ,
                   // fc: `${formatNumberWithCommas(row.fc)}%`,
                   wip: formatNumberWithCommas(row.wip),
