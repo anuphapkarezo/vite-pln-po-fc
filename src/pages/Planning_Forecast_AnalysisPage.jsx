@@ -47,6 +47,15 @@ const columns = [
           )}
         </div>
       ),
+      valueFormatter: (params) => {
+        // Assuming 'fc' is a numerical value, format it with commas for display
+        const formattedValue = new Intl.NumberFormat('en-US').format(params.value);
+        return formattedValue;
+      },
+        sortComparator: (a, b, cellParamsA, cellParamsB) => {
+        // Assuming 'fc' is a numerical value, use a custom sort comparator
+        return cellParamsA.value - cellParamsB.value;
+      },
   },
   { field: 'wip', headerName: 'WIP', width: 95 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header' ,
         valueFormatter: (params) => {
