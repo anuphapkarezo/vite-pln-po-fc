@@ -123,6 +123,8 @@ export default function Planning_Forecast_POPage({ onSearch }) {
     const [wipPending, setWipPending] = useState([]);
     const [FgUnmovement, setFgUnmovement] = useState([]);
     const [fcAccuracy, setfcAccuracy] = useState([]);
+    const [fcLatest, setfcLatest] = useState([]);
+
     // const [FgUnmovementDet, setFgUnmovementDet] = useState([]);
 
     // For Modal //
@@ -542,6 +544,33 @@ export default function Planning_Forecast_POPage({ onSearch }) {
             setIsLoading(false); // Set isLoading back to false when fetch is complete
           }
     };
+
+    const fetchData_fc_latest = async (
+        prd_name = selectedProduct,
+        prd_series = selectedSeries,
+    ) => {
+    try {
+        // setIsLoading(true);
+        const response = await axios.get(`http://10.17.66.242:3001/api/smart_planning/filter-fc-latest-product-series?prd_series=${selectedSeries}&prd_name=${selectedProduct}`);
+        // if (!response.ok) {
+        //     throw new Error('Network response was not OK');
+        // }
+        // const data = await response.json();
+        const data = await response.data;
+        // console.log(data);
+        const fcLatestData = {};
+        data.forEach(item => {
+            fcLatestData[item.wk] = item.qty_fc;
+        });
+        // console.log(fcLatestData);
+        setfcLatest(fcLatestData);
+        } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('An error occurred while fetching data accuracy');
+        } finally {
+            setIsLoading(false); // Set isLoading back to false when fetch is complete
+          }
+    };
     
     useEffect(() => { //ต้องมี userEffect เพื่อให้รับค่าจาก อีก component ได้ต่อเนื่อง realtime หากไม่มีจะต้องกดปุ่ม 2 รอบ
         fetchData_week();
@@ -557,6 +586,7 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         fetchData_WipPenDetails();
         fetchData_WipDetails();
         fetchData_fc_accuracy();
+        fetchData_fc_latest();
 
         console.log("Product" , selectedProduct);
         if (selectedProduct === null) {
@@ -600,24 +630,24 @@ export default function Planning_Forecast_POPage({ onSearch }) {
         dataByProduct[product.pfd_period_no].qty_fc[product.wk] = product.qty_fc;
     });
 
-    const fcLatestData = {};
-    wk_no.forEach(week => {
-        const week4Chars = week.slice(-4);
-        fcLatestData[week] = Object.values(dataByProduct).reduce((latest, productData) => {
-            const period4Chars = productData.pfd_period_no.slice(-4);
-            if (period4Chars === week4Chars) {
-                const qty_fc = productData.qty_fc[week];
-                return qty_fc !== undefined ? qty_fc : 0;
-            } else {
-                // If period4Chars !== week4Chars, update qty_fc with the value from 'week'
-                const qty_fc = productData.qty_fc[week];
-                if (qty_fc !== undefined) {
-                    latest = qty_fc;
-                }
-            }
-            return latest;
-        }, 0);
-    });
+    // const fcLatestData = {};
+    // wk_no.forEach(week => {
+    //     const week4Chars = week.slice(-4);
+    //     fcLatestData[week] = Object.values(dataByProduct).reduce((latest, productData) => {
+    //         const period4Chars = productData.pfd_period_no.slice(-4);
+    //         if (period4Chars === week4Chars) {
+    //             const qty_fc = productData.qty_fc[week];
+    //             return qty_fc !== undefined ? qty_fc : 0;
+    //         } else {
+    //             // If period4Chars !== week4Chars, update qty_fc with the value from 'week'
+    //             const qty_fc = productData.qty_fc[week];
+    //             if (qty_fc !== undefined) {
+    //                 latest = qty_fc;
+    //             }
+    //         }
+    //         return latest;
+    //     }, 0);
+    // });
     
     // Modal //
     const style_Modal  = {
@@ -978,16 +1008,21 @@ export default function Planning_Forecast_POPage({ onSearch }) {
                             ))}
                             <tr>
                                 <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#E4F1FF' , height: '30px'}}>FC_Latest :</td>
-                                {wk_no.map((week, weekIndex) => (
-                                    <td 
-                                        key={weekIndex} 
-                                        style={{ textAlign: 'center' , 
-                                        backgroundColor: '#E4F1FF' , 
-                                        color: weekIndex === 12 ? '#0E21A0' : 'black' , 
-                                        fontWeight: weekIndex === 12 ? 'bold' : 'normal'}}>
-                                        {formatNumberWithCommas(fcLatestData[week])}
-                                    </td>
-                                ))}
+                                {wk_no.map((week, weekIndex) => {
+                                    const fcLatestDataValue = fcLatest[week];
+                                    return (
+                                        <td
+                                            key={weekIndex}
+                                            style={{ textAlign: 'center', 
+                                            backgroundColor: '#E4F1FF' , 
+                                            color: weekIndex === 12 ? '#0E21A0' : 'black' , 
+                                            fontWeight: weekIndex === 12 ? 'bold' : 'normal'  }}
+                                        >
+                                            {fcLatestDataValue !== undefined ? formatNumberWithCommas(fcLatestDataValue) : "0"}
+                                            {/* {recValue !== undefined ? (recValue !== 0 ? recValue : "--") : "--"} */}
+                                        </td>
+                                    );
+                                })}
                             </tr>
                             <tr>
                                 <td style={{color: 'blue' , fontWeight: 'bold' , textAlign: 'right' , backgroundColor: '#AED2FF' ,height: '30px'}}>FC_Fluctuation :</td>
