@@ -34,7 +34,7 @@ const columns = [
     },
   },
   { field: 'po_cover_fc', headerName: 'PO cover FC (week)', width: 150 , headerAlign: 'center', align: 'center'  , headerClassName: 'bold-header'},
-  { field: 'fc_accuracy', headerName: 'FC Accuracy', width: 150 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header',
+  { field: 'fc_accuracy', headerName: 'FC Accuracy', width: 150 , headerAlign: 'center' , align: 'right' , headerClassName: 'bold-header',
       renderCell: (params) => (
         <div>
           {params.value}&nbsp;%&nbsp;&nbsp;&nbsp;&nbsp;
