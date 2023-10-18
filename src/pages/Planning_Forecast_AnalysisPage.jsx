@@ -19,6 +19,7 @@ import GppBadIcon from '@mui/icons-material/GppBad';
 const columns = [
   { field: 'sales', headerName: 'Sales', width: 120 , headerAlign: 'center' , headerClassName: 'bold-header'},
   { field: 'part', headerName: 'Product Name', width: 150 , headerAlign: 'center'  , headerClassName: 'bold-header'},
+  { field: 'input_factory', headerName: 'Input Factory', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
   { field: 'ship_factory', headerName: 'Ship Factory', width: 100 , headerAlign: 'center' , align: 'center' , headerClassName: 'bold-header'},
   { field: 'planner', headerName: 'Planner', width: 140 , headerAlign: 'center'  , headerClassName: 'bold-header'},
   { field: 'cr', headerName: 'CR', width: 140 , headerAlign: 'center'  , headerClassName: 'bold-header'},
